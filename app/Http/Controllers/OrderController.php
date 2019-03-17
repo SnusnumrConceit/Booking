@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Order\OrderCollection;
 use App\Models\Order;
 use App\Models\Room;
 use App\User;
@@ -58,7 +59,7 @@ class OrderController extends Controller
         try {
          $orders = Order::with(['customer', 'room'])->paginate(10);
          return response()->json([
-             'orders' => $orders
+             'orders' => new OrderCollection($orders)
          ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -71,6 +72,7 @@ class OrderController extends Controller
     public function search(Request $request)
     {
         try {
+//            'orders' => new OrderCollection($orders)
          return response()->json([]);
         } catch (\Exception $error) {
             return response()->json([

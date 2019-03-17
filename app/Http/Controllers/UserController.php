@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\User\UserCollection;
+use App\Http\Resources\User\UserInfo;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -55,7 +57,7 @@ class UserController extends Controller
         try {
             $users = User::paginate(10);
             return response()->json([
-                'users' => $users
+                'users' => new UserCollection($users)
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -81,7 +83,7 @@ class UserController extends Controller
             }
             $users = $users->paginate(10);
             return response()->json([
-                'users' => $users
+                'users' => new UserCollection($users)
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -104,6 +106,22 @@ class UserController extends Controller
             return response()->json([
                 'user' => $user
             ], 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
+    }
+
+    public function info(int $id)
+    {
+        try {
+         $user = User::with('orders')->findOrFail($id);
+         return response()->json([
+             'user_info' => new UserInfo($user)
+         ], 200);
+
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',

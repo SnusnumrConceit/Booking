@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Employee\EmployeeCollection;
 use App\Models\Appointment;
 use App\Models\Employee;
 use Carbon\Carbon;
@@ -55,7 +56,7 @@ class EmployeeController extends Controller
                 ? Employee::with('appointment')->paginate(10)
                 : Employee::with('appointment')->all();
             return response()->json([
-                'employees' => $employees
+                'employees' => new EmployeeCollection($employees)
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -82,7 +83,7 @@ class EmployeeController extends Controller
             }
             $employees = $employees->paginate(10);
             return response()->json([
-                'employees' => $employees
+                'employees' => new EmployeeCollection($employees)
             ], 200);
         } catch (\Exception $error) {
             return response()->json([

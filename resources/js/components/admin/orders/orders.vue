@@ -68,7 +68,17 @@
                             <td>{{ order.room.number }} </td>
                             <td>{{ order.room.price }} </td>
                             <td>{{ order.days }} </td>
-                            <td>{{ order.status }} </td>
+                            <td>
+                                <span class="text-danger" v-if="order.status_type === 0">
+                                    <i>{{ order.status }}</i>
+                                </span>
+                                <span class="text-info" v-else-if="order.status_type === 1">
+                                    <i>{{ order.status }}</i>
+                                </span>
+                                <span class="text-success" v-else-if="order.status_type === 2">
+                                    <i>{{ order.status }}</i>
+                                </span>
+                            </td>
                             <td>{{ order.note_date }} </td>
                             <td>
                                 <i class="fa fa-cog text-success" @click="$router.push({path: '/admin/orders/' + order.id})"></i>
