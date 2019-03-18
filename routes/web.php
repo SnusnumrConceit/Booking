@@ -59,6 +59,8 @@ Route::group(['prefix' => 'rooms'], function () {
     Route::get('/search', 'RoomController@search');
     Route::get('/edit/{id}', 'RoomController@form_info')
         ->where('id', '[0-9]+');
+    Route::get('/info/{id}', 'RoomController@info')
+        ->where('id', '[0-9]+');
     Route::post('/create', 'RoomController@create');
     Route::post('/update/{id}', 'RoomController@update')
         ->where('id', '[0-9]+');
@@ -76,4 +78,13 @@ Route::group(['prefix' => 'users'], function () {
         ->where('id', '[0-9]+');
     Route::post('/remove/{id}', 'UserController@destroy')
         ->where('id', '[0-9]+');
+});
+
+Route::group(['prefix' => 'photos'], function () {
+    Route::post('/upload', 'PhotoController@upload');
+    Route::post('/remove/{id}', 'PhotoController@destroy')
+        ->where('id', '[0-9]+');
+    Route::post('/create', 'PhotoController@create');
+    Route::get('/', 'PhotoController@store');
+    Route::get('/search', 'PhotoController@search');
 });

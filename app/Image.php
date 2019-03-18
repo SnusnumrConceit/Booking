@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Image extends Model
 {
-    public function move($from, $to)
+    public static function move($from, $to)
     {
         try {
             if (!Storage::disk('local')->move($from, $to)) {
@@ -24,14 +24,13 @@ class Image extends Model
         }
     }
 
-    public function upload($to)
+    public static function upload($request)
     {
         try {
-            if (!Storage::disk('local')->put($to)) {
-                throw new \Exception('Не удалось загрузить файл');
-            }
+            $tmp_path = $request->file('img')->store('public/uploads/tmp');
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'tmp_path' => $tmp_path
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -41,13 +40,14 @@ class Image extends Model
         }
     }
 
-    public function remove($path)
+    public static function remove($image)
     {
         try {
-            if (! Storage::disk('local')->exists($path)) {
+            $image->url = 'public/'.$image->url;
+            if (! Storage::disk('local')->exists($image->url)) {
                 throw new \Exception('Не найден файл');
             }
-            Storage::disk('local')->delete($path);
+            Storage::disk('local')->delete($image->url);
             return true;
         } catch (\Exception $error) {
             return response()->json([

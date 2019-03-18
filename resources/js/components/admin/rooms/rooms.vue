@@ -44,12 +44,12 @@
                         <th></th>
                         </thead>
                         <tbody v-for="(room, index) in rooms" :key="room.id">
-                        <td>{{ room.number }}</td>
-                        <td>{{ room.price }} ₽</td>
-                        <td>
-                            <i class="fa fa-cog text-success" @click="$router.push({path: '/admin/rooms/' + room.id})"></i>
-                            <i class="fa fa-trash text-danger" @click="remove(index, room.id)"></i>
-                        </td>
+                            <td @click="showModal(room.id)">{{ room.number }}</td>
+                            <td>{{ room.price }} ₽</td>
+                            <td>
+                                <i class="fa fa-cog text-success" @click="$router.push({path: '/admin/rooms/' + room.id})"></i>
+                                <i class="fa fa-trash text-danger" @click="remove(index, room.id)"></i>
+                            </td>
                         </tbody>
                     </table>
                     <paginate v-model="pagination.page"
@@ -71,6 +71,28 @@
                 </div>
             </div>
         </div>
+        <modal name="room_modal" :height="'auto'">
+            <div class="modal-header">
+                {{ room_info.number }}
+            </div>
+            <div class="modal-body">
+                <h2>{{ room_info.price }}</h2>
+                <div class="room-info__photos-container" v-if="room_info.photos.length">
+                    <div class="card col-2" v-for="photo in room_info.photos">
+                        <img :src="photo.url" @click="showLightbox(photo.name)">
+                    </div>
+                </div>
+                <lightbox id="mylightbox"
+                          ref="lightbox"
+                          :images="room_info.photos"
+                          :directory="pictures.thumbnailDir"
+                          :timeoutDuration="5000"
+                ></lightbox>
+                <div class="room-info__description">
+                    {{ room_info.description }}
+                </div>
+            </div>
+        </modal>
     </div>
 </template>
 
@@ -83,6 +105,17 @@
     data() {
       return {
         rooms: [],
+
+        pictures: {
+          thumbnailDir: 'http://booking.ru'
+        },
+
+        room_info: {
+          number: '',
+          description: '',
+          price: '',
+          photos: []
+        },
 
         pagination: {
           page: 1,
@@ -188,7 +221,29 @@
           this.rooms = response.data.rooms.data;
           this.pagination.last_page = response.data.rooms.last_page;
         }
-      }
+      },
+
+      async loadInfo(id) {
+        const response = await axios.get('/rooms/info/' + id);
+        if (response.status !== 200 || !response.data.status === 'error') {
+          console.log(response.data.msg);
+        } else {
+          this.room_info = response.data.room;
+        }
+      },
+
+      showModal(id) {
+        this.loadInfo(id);
+        this.$modal.show('room_modal');
+      },
+
+      hideModal() {
+        this.$modal.hide('room_modal');
+      },
+
+      showLightbox(imageName) {
+        this.$refs.lightbox.show(imageName);
+      },
     },
 
     watch: {
@@ -210,6 +265,13 @@
   }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+    .room-info {
+        &__photos-container {
+            display: flex;
+        }
+    }
+    th, td:first-child {
+        cursor: pointer;
+    }
 </style>

@@ -14,6 +14,16 @@ class Room extends Model
 
     public function photos()
     {
-        return $this->belongsToMany(Photo::class, 'photos', 'photo_id', 'id');
+        return $this->belongsToMany(Photo::class, 'photo_rooms', 'room_id', 'photo_id');
+    }
+
+    public function customers()
+    {
+        return $this->belongsToMany(User::class, 'users', 'user_id', 'id');
+    }
+
+    public function free()
+    {
+        return $this->whereDoesntHave('customers');
     }
 }

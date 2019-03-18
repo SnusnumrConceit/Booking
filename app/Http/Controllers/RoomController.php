@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Room\RoomInfo;
 use App\Models\Room;
 use Illuminate\Http\Request;
 
@@ -94,6 +95,21 @@ class RoomController extends Controller
             return response()->json([
                 'room' => $room
             ]);
+        } catch (\Exception $error) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
+    }
+
+    public function info(int $id)
+    {
+        try {
+            $room = Room::with('photos')->findOrFail($id);
+            return response()->json([
+                'room' => new RoomInfo($room)
+            ], 200);
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',

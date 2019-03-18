@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Order\OrderCollection;
+use App\Mail\OrderShipped;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Order;
 use App\Models\Room;
 use App\User;
@@ -36,6 +38,10 @@ class OrderController extends Controller
                 'days' => $request->days
             ]);
             $order->save();
+            $mail_order = $order->with(['customer', 'room'])->findOrFail($order->id);
+            Mail::to($mail_order->customer)->send(new OrderShipped(
+                $mail_order
+            ));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Заказ успешно добавлен'

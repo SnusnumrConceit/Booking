@@ -24,6 +24,11 @@ Vue.use(VueSweetalert2);
 import VModal from 'vue-js-modal'
 Vue.use(VModal);
 
+import Lightbox from 'vue-my-photos';
+Vue.component('lightbox', Lightbox);
+Vue.use(Lightbox);
+
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

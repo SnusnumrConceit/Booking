@@ -6,10 +6,11 @@ use App\Models\Room;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Kodeine\Acl\Traits\HasRole;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasRole;
 
     /**
      * The attributes that are mass assignable.
@@ -41,6 +42,6 @@ class User extends Authenticatable
 
     public function orders()
     {
-        return $this->belongsToMany(Room::class, 'rooms', 'room_id', 'id');
+        return $this->belongsToMany(Room::class, 'orders', 'room_id', 'id');
     }
 }

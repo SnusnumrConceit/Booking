@@ -73,11 +73,6 @@ export const routes = [
     component: PhotoForm
   },
   {
-    name: 'photo_form',
-    path: '/admin/photos/:id',
-    component: PhotoForm
-  },
-  {
     name: 'rooms',
     path: '/admin/rooms',
     component: Rooms
