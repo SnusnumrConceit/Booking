@@ -42,9 +42,13 @@ Vue.use(Lightbox);
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
-// Vue.component('admin', require('./components/templates/admin.vue').default);
+import store from './store/index';
 
 import Admin from './components/templates/admin';
+import Login from './components/templates/login_admin';
+
+import Vuex from 'vuex';
+Vue.use(Vuex);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -58,5 +62,6 @@ let router = new VueRouter({ routes });
 const app = new Vue({
     el: '#app',
     router,
-    components: { Admin }
+    store,
+    components: { Admin, Login }
 });

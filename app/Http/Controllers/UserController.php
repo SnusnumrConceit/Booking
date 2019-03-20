@@ -7,9 +7,64 @@ use App\Http\Resources\User\UserInfo;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use JWTAuth;
+use Illuminate\Support\Facades\Hash;
+
 
 class UserController extends Controller
 {
+    public function signin(Request $request)
+    {
+//        $user = User::where([
+//            'email' => $request->email,
+//            'password' => Hash::make($request->password)
+//        ])->count();
+//        if (! $user) {
+//            return response()->json([
+//                'status' => 'error',
+//                'msg' => 'Неверные данные'
+//            ]);
+//        }
+        $this->validate($request, [
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+        $credentials = $request->only('email', 'password');
+        try {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json([
+                    'status' => 'error',
+                    'msg' => 'Неверные данные'
+                ]);
+            }
+            return response()->json([
+                'token' => $token,
+                'user' => $this->getUser()
+            ], 200);
+        } catch (JWTException $error) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
+    }
+
+    public function registration(Request $request)
+    {
+        $result = $this->create($request);
+        return $this->signin($request);
+    }
+
+    public function logout()
+    {
+      auth()->logout();
+    }
+
+    public function getUser()
+    {
+        return auth()->user();
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -27,7 +82,7 @@ class UserController extends Controller
             $user = new User();
             $user->fill([
                 'email' => $request->email,
-                'password' => bcrypt($request->password),
+                'password' => Hash::make($request->password),
                 'last_name' => $request->last_name,
                 'first_name' => $request->first_name,
                 'middle_name' => $request->middle_name,
@@ -149,7 +204,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $user->fill([
                 'email' => $request->email,
-                'password' => bcrypt($request->password),
+                'password' => Hash::make($request->password),
                 'last_name' => $request->last_name,
                 'first_name' => $request->first_name,
                 'middle_name' => $request->middle_name,

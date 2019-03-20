@@ -16,6 +16,8 @@ import RoomForm from './components/admin/rooms/room_form';
 import Users from  './components/admin/users/users';
 import UserForm from  './components/admin/users/user_form';
 
+import Login from './components/templates/login_admin';
+
 export const routes = [
   {
     name: 'appointments',
@@ -101,5 +103,12 @@ export const routes = [
     name: 'user_form',
     path: '/admin/users/:id',
     component: UserForm
-  }
+  },
+
+    /** auth **/
+    {
+        name: 'login',
+        path: '/login',
+        component: Login
+    }
 ];

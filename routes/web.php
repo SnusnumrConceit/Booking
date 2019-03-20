@@ -88,3 +88,9 @@ Route::group(['prefix' => 'photos'], function () {
     Route::get('/', 'PhotoController@store');
     Route::get('/search', 'PhotoController@search');
 });
+Auth::routes();
+
+Route::post('login', 'UserController@signin');
+Route::post('registration', 'UserController@create');
+
+Route::get('/home', 'HomeController@index')->name('home');
