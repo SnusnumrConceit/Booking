@@ -89,6 +89,8 @@
                 return false;
             }
             localStorage.setItem('token', response.data.token);
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            localStorage.setItem('csrf_token', response.data.user.csrf_token);
             this.setUser(response.data.user);
             this.$router.push('/admin/rooms');
         },

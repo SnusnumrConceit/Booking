@@ -4369,12 +4369,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vue_image_crop_upload__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-image-crop-upload */ "./node_modules/vue-image-crop-upload/upload-2.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -4418,6 +4423,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "photo_form",
@@ -4436,6 +4442,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       show: false
     };
   },
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapGetters"])('Auth', {
+    csrf_token: 'getCSRF'
+  })),
   methods: {
     showCropper: function showCropper() {
       this.show = !this.show;
@@ -5514,6 +5523,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -5524,7 +5541,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       user: {
-        birthday: Date.now()
+        birthday: Date.now(),
+        role: ''
       },
       ru: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_2__["ru"],
       errors: {
@@ -5540,7 +5558,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           status: false,
           msg: ''
         }
-      }
+      },
+      roles: []
     };
   },
   methods: {
@@ -5660,12 +5679,55 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return loadData;
+    }(),
+    loadExtendData: function () {
+      var _loadExtendData = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return axios.get('/users/form_info');
+
+              case 2:
+                response = _context3.sent;
+
+                if (!(response.status !== 200 || response.data.status === 'error')) {
+                  _context3.next = 8;
+                  break;
+                }
+
+                this.$swal('Ошибка!', response.data.msg, 'error');
+                return _context3.abrupt("return", false);
+
+              case 8:
+                this.roles = response.data.roles;
+                return _context3.abrupt("return", true);
+
+              case 10:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function loadExtendData() {
+        return _loadExtendData.apply(this, arguments);
+      }
+
+      return loadExtendData;
     }()
   },
   created: function created() {
     if (this.$route.params.id) {
       this.loadData();
     }
+
+    this.loadExtendData();
   }
 });
 
@@ -6018,8 +6080,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _login_admin__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./login_admin */ "./resources/js/components/templates/login_admin.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _login_admin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./login_admin */ "./resources/js/components/templates/login_admin.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -6271,7 +6341,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "admin",
   components: {
-    Login: _login_admin__WEBPACK_IMPORTED_MODULE_0__["default"]
+    Login: _login_admin__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
     return {
@@ -6286,20 +6356,77 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   computed: _objectSpread({
     login: function login() {
       return this.$route.name === 'login' ? true : false;
-    },
-    fullName: function fullName() {
-      return this.user.last_name + ' ' + this.user.first_name;
     }
-  }, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])('Auth', {
+  }, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapGetters"])('Auth', {
     'token': 'getToken',
     'user': 'getUser'
-  })),
+  }), {
+    access: function access() {
+      return this.user.role !== 'customer' ? true : false;
+    },
+    accessAdmin: function accessAdmin() {
+      return this.user.role === 'superadmin' ? true : false;
+    }
+  }),
   methods: {
     active: function active(link, type) {
       this[type].isActive = {};
       this[type].isActive[link] = true;
     },
-    logout: function logout() {}
+    checkOpenTab: function checkOpenTab() {
+      if (this.$route.name !== 'login') {
+        this.active(this.$route.name, 'menu');
+      }
+    },
+    logout: function () {
+      var _logout = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var response;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return axios.post('/logout');
+
+              case 2:
+                response = _context.sent;
+
+                if (!(response.status !== 200 || response.data.status === 'error')) {
+                  _context.next = 7;
+                  break;
+                }
+
+                console.log(response);
+                this.$swal('Ошибка!', response.data, 'error');
+                return _context.abrupt("return", false);
+
+              case 7:
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('csrf_token');
+                this.$router.push({
+                  name: 'login'
+                });
+
+              case 11:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+
+      function logout() {
+        return _logout.apply(this, arguments);
+      }
+
+      return logout;
+    }()
+  },
+  created: function created() {
+    this.checkOpenTab();
   }
 });
 
@@ -6428,10 +6555,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
               case 6:
                 localStorage.setItem('token', response.data.token);
+                localStorage.setItem('user', JSON.stringify(response.data.user));
+                localStorage.setItem('csrf_token', response.data.user.csrf_token);
                 this.setUser(response.data.user);
                 this.$router.push('/admin/rooms');
 
-              case 9:
+              case 11:
               case "end":
                 return _context.stop();
             }
@@ -46531,9 +46660,7 @@ var render = function() {
               height: 300,
               langType: "ru",
               url: "/photos/upload",
-              headers: {
-                "X-CSRF-TOKEN": "5nt2jlgAnaAXxmzMLEltWJ1P2MqfMHdq8zhBco5v"
-              }
+              headers: { "X-CSRF-TOKEN": _vm.csrf_token }
             },
             on: {
               "crop-success": _vm.cropSuccess,
@@ -47454,6 +47581,53 @@ var render = function() {
       ),
       _vm._v(" "),
       _c("div", { staticClass: "form-group" }, [
+        _c("label", { attrs: { for: "" } }, [_vm._v("Роль")]),
+        _vm._v(" "),
+        _c(
+          "select",
+          {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.user.role,
+                expression: "user.role"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: { name: "", id: "" },
+            on: {
+              change: function($event) {
+                var $$selectedVal = Array.prototype.filter
+                  .call($event.target.options, function(o) {
+                    return o.selected
+                  })
+                  .map(function(o) {
+                    var val = "_value" in o ? o._value : o.value
+                    return val
+                  })
+                _vm.$set(
+                  _vm.user,
+                  "role",
+                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
+                )
+              }
+            }
+          },
+          _vm._l(_vm.roles, function(role) {
+            return _c("option", { domProps: { value: role.id } }, [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(role.name) +
+                  "\n                "
+              )
+            ])
+          }),
+          0
+        )
+      ]),
+      _vm._v(" "),
+      _c("div", { staticClass: "form-group" }, [
         _c("label", { attrs: { for: "" } }, [_vm._v("email")]),
         _vm._v(" "),
         _c("input", {
@@ -47869,153 +48043,169 @@ var render = function() {
           _c("div", { staticClass: "menu-sidebar__content js-scrollbar1" }, [
             _c("nav", { staticClass: "navbar-sidebar" }, [
               _c("ul", { staticClass: "list-unstyled navbar__list" }, [
-                _c(
-                  "li",
-                  {
-                    class: {
-                      active: _vm.menu.isActive.orders,
-                      "has-sub": _vm.menu.isActive.orders
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.active("orders", "menu")
-                      }
-                    }
-                  },
-                  [
-                    _c("router-link", { attrs: { to: "/admin/orders" } }, [
-                      _c("i", { staticClass: "far fa-money-bill-alt" }),
-                      _vm._v(
-                        "\n                            Заказы\n                        "
-                      )
-                    ])
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "li",
-                  {
-                    class: {
-                      active: _vm.menu.isActive.users,
-                      "has-sub": _vm.menu.isActive.users
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.active("users", "menu")
-                      }
-                    }
-                  },
-                  [
-                    _c("router-link", { attrs: { to: "/admin/users" } }, [
-                      _c("i", { staticClass: "fas fa-users" }),
-                      _vm._v(
-                        "\n                            Пользователи\n                        "
-                      )
-                    ])
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "li",
-                  {
-                    class: {
-                      active: _vm.menu.isActive.rooms,
-                      "has-sub": _vm.menu.isActive.rooms
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.active("rooms", "menu")
-                      }
-                    }
-                  },
-                  [
-                    _c("router-link", { attrs: { to: "/admin/rooms" } }, [
-                      _c("i", { staticClass: "fas fa-door-closed" }),
-                      _vm._v(
-                        "\n                            Комнаты\n                        "
-                      )
-                    ])
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "li",
-                  {
-                    class: {
-                      active: _vm.menu.isActive.employees,
-                      "has-sub": _vm.menu.isActive.employees
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.active("employees", "menu")
-                      }
-                    }
-                  },
-                  [
-                    _c("router-link", { attrs: { to: "/admin/employees" } }, [
-                      _c("i", { staticClass: "fas fa-user-tie" }),
-                      _vm._v(
-                        "\n                            Работники\n                        "
-                      )
-                    ])
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "li",
-                  {
-                    class: {
-                      active: _vm.menu.isActive.photos,
-                      "has-sub": _vm.menu.isActive.photos
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.active("photos", "menu")
-                      }
-                    }
-                  },
-                  [
-                    _c("router-link", { attrs: { to: "/admin/photos" } }, [
-                      _c("i", { staticClass: "far fa-image" }),
-                      _vm._v(
-                        "\n                            Фотографии\n                        "
-                      )
-                    ])
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "li",
-                  {
-                    class: {
-                      active: _vm.menu.isActive.appointments,
-                      "has-sub": _vm.menu.isActive.appointments
-                    },
-                    on: {
-                      click: function($event) {
-                        return _vm.active("appointments", "menu")
-                      }
-                    }
-                  },
-                  [
-                    _c(
-                      "router-link",
-                      { attrs: { to: "/admin/appointments" } },
+                _vm.access
+                  ? _c(
+                      "li",
+                      {
+                        class: {
+                          active: _vm.menu.isActive.orders,
+                          "has-sub": _vm.menu.isActive.orders
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.active("orders", "menu")
+                          }
+                        }
+                      },
                       [
-                        _c("i", { staticClass: "fas fa-award" }),
-                        _vm._v(
-                          "\n                            Должности\n                        "
-                        )
-                      ]
+                        _c("router-link", { attrs: { to: "/admin/orders" } }, [
+                          _c("i", { staticClass: "far fa-money-bill-alt" }),
+                          _vm._v(
+                            "\n                            Заказы\n                        "
+                          )
+                        ])
+                      ],
+                      1
                     )
-                  ],
-                  1
-                )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.accessAdmin
+                  ? _c(
+                      "li",
+                      {
+                        class: {
+                          active: _vm.menu.isActive.users,
+                          "has-sub": _vm.menu.isActive.users
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.active("users", "menu")
+                          }
+                        }
+                      },
+                      [
+                        _c("router-link", { attrs: { to: "/admin/users" } }, [
+                          _c("i", { staticClass: "fas fa-users" }),
+                          _vm._v(
+                            "\n                            Пользователи\n                        "
+                          )
+                        ])
+                      ],
+                      1
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.access
+                  ? _c(
+                      "li",
+                      {
+                        class: {
+                          active: _vm.menu.isActive.rooms,
+                          "has-sub": _vm.menu.isActive.rooms
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.active("rooms", "menu")
+                          }
+                        }
+                      },
+                      [
+                        _c("router-link", { attrs: { to: "/admin/rooms" } }, [
+                          _c("i", { staticClass: "fas fa-door-closed" }),
+                          _vm._v(
+                            "\n                            Комнаты\n                        "
+                          )
+                        ])
+                      ],
+                      1
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.accessAdmin
+                  ? _c(
+                      "li",
+                      {
+                        class: {
+                          active: _vm.menu.isActive.employees,
+                          "has-sub": _vm.menu.isActive.employees
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.active("employees", "menu")
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "router-link",
+                          { attrs: { to: "/admin/employees" } },
+                          [
+                            _c("i", { staticClass: "fas fa-user-tie" }),
+                            _vm._v(
+                              "\n                            Работники\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.access
+                  ? _c(
+                      "li",
+                      {
+                        class: {
+                          active: _vm.menu.isActive.photos,
+                          "has-sub": _vm.menu.isActive.photos
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.active("photos", "menu")
+                          }
+                        }
+                      },
+                      [
+                        _c("router-link", { attrs: { to: "/admin/photos" } }, [
+                          _c("i", { staticClass: "far fa-image" }),
+                          _vm._v(
+                            "\n                            Фотографии\n                        "
+                          )
+                        ])
+                      ],
+                      1
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.accessAdmin
+                  ? _c(
+                      "li",
+                      {
+                        class: {
+                          active: _vm.menu.isActive.appointments,
+                          "has-sub": _vm.menu.isActive.appointments
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.active("appointments", "menu")
+                          }
+                        }
+                      },
+                      [
+                        _c(
+                          "router-link",
+                          { attrs: { to: "/admin/appointments" } },
+                          [
+                            _c("i", { staticClass: "fas fa-award" }),
+                            _vm._v(
+                              "\n                            Должности\n                        "
+                            )
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e()
               ])
             ])
           ])
@@ -48053,7 +48243,7 @@ var render = function() {
                                       [
                                         _vm._v(
                                           "\n                                            " +
-                                            _vm._s(_vm.fullName) +
+                                            _vm._s(_vm.user.full_name) +
                                             "\n                                        "
                                         )
                                       ]
@@ -48062,7 +48252,7 @@ var render = function() {
                                     _c(
                                       "a",
                                       {
-                                        attrs: { href: "" },
+                                        attrs: { href: "#" },
                                         on: {
                                           click: function($event) {
                                             return _vm.logout()
@@ -67772,8 +67962,8 @@ __webpack_require__.r(__webpack_exports__);
   namespaced: true,
   state: {
     token: localStorage.getItem('token') || '',
-    user: {},
-    csrf_token: ''
+    user: JSON.parse(localStorage.getItem('user')) || '',
+    csrf_token: localStorage.getItem('token') || ''
   },
   mutations: {
     set: function set(state, _ref) {
@@ -67834,8 +68024,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /home/snusnumr1996/repos/Booking/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /home/snusnumr1996/repos/Booking/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /home/snusnumr/university_repos/booking/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /home/snusnumr/university_repos/booking/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

@@ -166,7 +166,6 @@ return [
          * Package Service Providers...
          */
         Kodeine\Acl\AclServiceProvider::class,
-        OwenIt\Auditing\AuditingServiceProvider::class,
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         /*
          * Application Service Providers...

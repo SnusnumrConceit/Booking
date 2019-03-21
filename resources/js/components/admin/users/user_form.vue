@@ -23,6 +23,14 @@
                 </datepicker>
             </div>
             <div class="form-group">
+                <label for="">Роль</label>
+                <select name="" id="" class="form-control" v-model="user.role">
+                    <option :value="role.id" v-for="role in roles">
+                        {{ role.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="">email</label>
                 <input type="text" class="form-control" v-model.trim="user.email">
             </div>
@@ -55,7 +63,8 @@
     data() {
       return {
         user: {
-          birthday: Date.now()
+          birthday: Date.now(),
+          role: ''
         },
 
         ru: ru,
@@ -73,7 +82,8 @@
             status: false,
             msg: ''
           }
-        }
+        },
+        roles: []
       }
     },
     methods: {
@@ -110,6 +120,17 @@
           this.user = response.data.user;
           return true;
         }
+      },
+
+      async loadExtendData() {
+        const response = await axios.get('/users/form_info');
+        if (response.status !== 200 || response.data.status === 'error') {
+          this.$swal('Ошибка!', response.data.msg, 'error');
+          return false;
+        } else {
+          this.roles = response.data.roles;
+          return true;
+        }
       }
     },
 
@@ -117,6 +138,7 @@
       if (this.$route.params.id) {
         this.loadData();
       }
+      this.loadExtendData();
     }
   }
 </script>

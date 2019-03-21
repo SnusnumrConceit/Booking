@@ -16,7 +16,11 @@ Route::get('/', function () {
 });
 
 
-Route::group(['prefix' => 'appointments'], function () {
+Route::group([
+    'prefix' => 'appointments',
+    'middleware' => ['auth', 'acl'],
+    'is' => 'superadmin'
+], function () {
    Route::get('/', 'AppointmentController@store');
    Route::get('/search', 'AppointmentController@search');
    Route::get('/edit/{id}', 'AppointmentController@form_info')
@@ -28,7 +32,11 @@ Route::group(['prefix' => 'appointments'], function () {
        ->where('id', '[0-9]+');
 });
 
-Route::group(['prefix' => 'employees'], function () {
+Route::group([
+    'prefix' => 'employees',
+    'middleware' => ['auth', 'acl'],
+    'is' => 'superadmin'
+], function () {
     Route::get('/', 'EmployeeController@store');
     Route::get('/search', 'EmployeeController@search');
     Route::get('/edit/{id}', 'EmployeeController@edit')
@@ -41,7 +49,11 @@ Route::group(['prefix' => 'employees'], function () {
         ->where('id', '[0-9]+');
 });
 
-Route::group(['prefix' => 'orders'], function () {
+Route::group([
+    'prefix' => 'orders',
+    'middleware' => ['auth', 'acl'],
+    'is' => 'superadmin|admin|customer'
+], function () {
     Route::get('/', 'OrderController@store');
     Route::get('/search', 'OrderController@search');
     Route::get('/edit/{id}', 'OrderController@edit')
@@ -54,7 +66,9 @@ Route::group(['prefix' => 'orders'], function () {
         ->where('id', '[0-9]+');
 });
 
-Route::group(['prefix' => 'rooms'], function () {
+Route::group([
+    'prefix' => 'rooms'
+], function () {
     Route::get('/', 'RoomController@store');
     Route::get('/search', 'RoomController@search');
     Route::get('/edit/{id}', 'RoomController@form_info')
@@ -68,11 +82,15 @@ Route::group(['prefix' => 'rooms'], function () {
         ->where('id', '[0-9]+');
 });
 
-Route::group(['prefix' => 'users'], function () {
+Route::group([
+    'prefix' => 'users',
+    'is' => 'superadmin'
+], function () {
     Route::get('/', 'UserController@store');
     Route::get('/search', 'UserController@search');
     Route::get('/edit/{id}', 'UserController@edit')
         ->where('id', '[0-9]+');
+    Route::get('/form_info', 'UserController@form_info');
     Route::post('/create', 'UserController@create');
     Route::post('/update/{id}', 'UserController@update')
         ->where('id', '[0-9]+');
@@ -80,7 +98,9 @@ Route::group(['prefix' => 'users'], function () {
         ->where('id', '[0-9]+');
 });
 
-Route::group(['prefix' => 'photos'], function () {
+Route::group([
+    'prefix' => 'photos'
+], function () {
     Route::post('/upload', 'PhotoController@upload');
     Route::post('/remove/{id}', 'PhotoController@destroy')
         ->where('id', '[0-9]+');

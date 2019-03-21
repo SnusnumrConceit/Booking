@@ -15,7 +15,7 @@
                            :height="300"
                            :langType="'ru'"
                            url="/photos/upload"
-                           :headers="{ 'X-CSRF-TOKEN': '5nt2jlgAnaAXxmzMLEltWJ1P2MqfMHdq8zhBco5v'}"></my-upload>
+                           :headers="{ 'X-CSRF-TOKEN': csrf_token}"></my-upload>
                 <img :src="tmp" alt="" v-if="tmp.length">
             </div>
             <div class="form-group" v-if="rooms.length">
@@ -43,6 +43,7 @@
 
 <script>
   import MyUpload from 'vue-image-crop-upload';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: "photo_form",
@@ -61,6 +62,11 @@
 
         show: false,
       }
+    },
+    computed: {
+        ...mapGetters('Auth', {
+          csrf_token: 'getCSRF'
+        })
     },
     methods: {
       showCropper() {

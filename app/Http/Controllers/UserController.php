@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserInfo;
+use App\Http\Resources\User\UserVuex;
+use App\Models\RoleUser;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Kodeine\Acl\Models\Eloquent\Role;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use JWTAuth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 
 class UserController extends Controller
@@ -38,9 +42,12 @@ class UserController extends Controller
                     'msg' => 'Неверные данные'
                 ]);
             }
+            Auth::attempt($credentials, true);
+            $user = Auth::user();
+//            $user->perms = Role::find($user->roles[0]->id)->getPermissions();
             return response()->json([
                 'token' => $token,
-                'user' => $this->getUser()
+                'user' => new UserVuex($user)
             ], 200);
         } catch (JWTException $error) {
             return response()->json([
@@ -58,7 +65,19 @@ class UserController extends Controller
 
     public function logout()
     {
-      auth()->logout();
+        try {
+            auth()->logout();
+            return response()->json([
+                'status' => 'success'
+            ], 200);
+        }
+        catch (\Exception $error) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
+
     }
 
     public function getUser()
@@ -89,6 +108,14 @@ class UserController extends Controller
                 'birthday' => $this->convertDate($request->birthday)
             ]);
             $user->save();
+            $user_role = new RoleUser();
+            $user_role->where('user_id', $user->id)
+                ->delete();
+            $user_role->fill([
+                'role_id' => $request->role,
+                'user_id' => $user->id
+            ]);
+            $user_role->save();
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Пользователь успешно добавлен'
@@ -157,9 +184,27 @@ class UserController extends Controller
     public function edit(int $id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::with('role')->findOrFail($id);
+            $role = $user->role[0]->id;
+            unset($user->role);
+            $user->role = $role;
             return response()->json([
                 'user' => $user
+            ], 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
+    }
+
+    public function form_info()
+    {
+        try {
+            $roles = Role::all();
+            return response()->json([
+                'roles' => $roles
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -211,6 +256,14 @@ class UserController extends Controller
                 'birthday' => $this->convertDate($request->birthday)
             ]);
             $user->save();
+            $user_role = new RoleUser();
+            $user_role->where('user_id', $user->id)
+                ->delete();
+            $user_role->fill([
+                'role_id' => $request->role,
+                'user_id' => $user->id
+            ]);
+            $user_role->save();
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Сведения о пользователе успешно обновлёны'

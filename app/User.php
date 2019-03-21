@@ -6,6 +6,7 @@ use App\Models\Room;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Kodeine\Acl\Models\Eloquent\Role;
 use Kodeine\Acl\Traits\HasRole;
 
 class User extends Authenticatable
@@ -42,6 +43,11 @@ class User extends Authenticatable
 
     public function orders()
     {
-        return $this->belongsToMany(Room::class, 'orders', 'room_id', 'id');
+        return $this->belongsToMany(Room::class, 'orders', 'user_id', 'room_id');
+    }
+
+    public function role()
+    {
+        return $this->belongsToMany(Role::class);
     }
 }

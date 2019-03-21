@@ -7,37 +7,37 @@
             <div class="menu-sidebar__content js-scrollbar1">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
-                        <li :class="{ 'active': menu.isActive.orders, 'has-sub': menu.isActive.orders}" @click="active('orders', 'menu')">
+                        <li :class="{ 'active': menu.isActive.orders, 'has-sub': menu.isActive.orders}" @click="active('orders', 'menu')" v-if="access">
                             <router-link :to="'/admin/orders'">
                                 <i class="far fa-money-bill-alt"></i>
                                 Заказы
                             </router-link>
                         </li>
-                        <li :class="{ 'active': menu.isActive.users, 'has-sub': menu.isActive.users}" @click="active('users', 'menu')">
+                        <li :class="{ 'active': menu.isActive.users, 'has-sub': menu.isActive.users}" @click="active('users', 'menu')" v-if="accessAdmin">
                             <router-link :to="'/admin/users'">
                                 <i class="fas fa-users"></i>
                                 Пользователи
                             </router-link>
                         </li>
-                        <li :class="{ 'active': menu.isActive.rooms, 'has-sub': menu.isActive.rooms}" @click="active('rooms', 'menu')">
+                        <li :class="{ 'active': menu.isActive.rooms, 'has-sub': menu.isActive.rooms}" @click="active('rooms', 'menu')" v-if="access">
                             <router-link :to="'/admin/rooms'">
                                 <i class="fas fa-door-closed"></i>
                                 Комнаты
                             </router-link>
                         </li>
-                        <li :class="{ 'active': menu.isActive.employees, 'has-sub': menu.isActive.employees}" @click="active('employees', 'menu')">
+                        <li :class="{ 'active': menu.isActive.employees, 'has-sub': menu.isActive.employees}" @click="active('employees', 'menu')" v-if="accessAdmin">
                             <router-link :to="'/admin/employees'">
                                 <i class="fas fa-user-tie"></i>
                                 Работники
                             </router-link>
                         </li>
-                        <li :class="{ 'active': menu.isActive.photos, 'has-sub': menu.isActive.photos}" @click="active('photos', 'menu')">
+                        <li :class="{ 'active': menu.isActive.photos, 'has-sub': menu.isActive.photos}" @click="active('photos', 'menu')" v-if="access">
                             <router-link :to="'/admin/photos'">
                                 <i class="far fa-image"></i>
                                 Фотографии
                             </router-link>
                         </li>
-                        <li :class="{ 'active': menu.isActive.appointments, 'has-sub': menu.isActive.appointments}" @click="active('appointments', 'menu')">
+                        <li :class="{ 'active': menu.isActive.appointments, 'has-sub': menu.isActive.appointments}" @click="active('appointments', 'menu')" v-if="accessAdmin">
                             <router-link :to="'/admin/appointments'">
                                 <i class="fas fa-award"></i>
                                 Должности
@@ -179,9 +179,9 @@
                                         <!--</div>-->
                                         <div class="content" v-if="user">
                                             <a class="js-acc-btn" href="#">
-                                                {{ fullName }}
+                                                {{ user.full_name }}
                                             </a>
-                                            <a href="" @click="logout()">
+                                            <a href="#" @click="logout()">
                                                 Выйти
                                             </a>
                                         </div>
@@ -263,13 +263,16 @@
         login() {
             return (this.$route.name === 'login') ? true : false;
         },
-          fullName() {
-            return this.user.last_name + ' ' + this.user.first_name;
-          },
-          ...mapGetters('Auth', {
-              'token': 'getToken',
-              'user': 'getUser'
-          }),
+        ...mapGetters('Auth', {
+          'token': 'getToken',
+          'user': 'getUser'
+        }),
+        access() {
+          return (this.user.role !== 'customer') ? true : false;
+        },
+        accessAdmin() {
+          return (this.user.role === 'superadmin') ? true : false;
+        },
       },
 
     methods: {
@@ -278,11 +281,28 @@
         this[type].isActive[link] = true;
       },
 
-        logout() {
-
+      checkOpenTab() {
+        if (this.$route.name !== 'login') {
+          this.active(this.$route.name, 'menu');
         }
+      },
 
+      async logout() {
+        const response = await axios.post('/logout');
+        if (response.status !== 200 || response.data.status === 'error') {
+          console.log(response);
+          this.$swal('Ошибка!', response.data, 'error');
+          return false;
+        }
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('csrf_token');
+        this.$router.push({ name: 'login' });
+      }
     },
+    created() {
+      this.checkOpenTab();
+    }
   }
 </script>
 

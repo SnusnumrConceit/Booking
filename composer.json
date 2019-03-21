@@ -13,7 +13,6 @@
         "kodeine/laravel-acl": "~1.0@dev",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
-        "owen-it/laravel-auditing": "^9.0",
         "tymon/jwt-auth": "0.5.*"
     },
     "require-dev": {
