@@ -18,6 +18,13 @@ import UserForm from  './components/admin/users/user_form';
 
 import Login from './components/templates/login_admin';
 
+/** Public Routes **/
+import General from './components/public/content/general';
+import PublicRooms from './components/public/content/rooms_public';
+import PublicReports from './components/public/content/reports_public';
+import Contacts from './components/public/content/contacts';
+
+
 export const routes = [
   {
     name: 'appointments',
@@ -105,10 +112,32 @@ export const routes = [
     component: UserForm
   },
 
-    /** auth **/
-    {
-        name: 'login',
-        path: '/login',
-        component: Login
-    }
+  /** auth **/
+  {
+      name: 'login',
+      path: '/login',
+      component: Login
+  },
+
+  /** Public Routes **/
+  {
+    name: 'main',
+    path: '/main',
+    component: General
+  },
+  {
+    name: 'public_rooms',
+    path: '/rooms',
+    component: PublicRooms
+  },
+  {
+    name: 'reports',
+    path: '/reports',
+    component: PublicReports
+  },
+  {
+    name: 'contacts',
+    path: '/contacts',
+    component: Contacts
+  }
 ];

@@ -45,7 +45,9 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 import store from './store/index';
 
 import Admin from './components/templates/admin';
-import Login from './components/templates/login_admin';
+import Public from './components/templates/public';
+import Login from './components/public/auth/login_public';
+import Registration from './components/public/auth/registration_public';
 
 import Vuex from 'vuex';
 Vue.use(Vuex);
@@ -63,5 +65,5 @@ const app = new Vue({
     el: '#app',
     router,
     store,
-    components: { Admin, Login }
+    components: { Admin, Public }
 });

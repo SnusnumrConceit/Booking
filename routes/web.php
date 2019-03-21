@@ -99,6 +99,23 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => 'reports',
+    'is' => 'superadmin'
+], function () {
+    Route::get('/search', 'ReportController@search');
+    Route::get('/edit/{id}', 'ReportController@edit')
+        ->where('id', '[0-9]+');
+    Route::get('/form_info', 'ReportController@form_info');
+    Route::post('/create', 'ReportController@create');
+    Route::post('/update/{id}', 'ReportController@update')
+        ->where('id', '[0-9]+');
+    Route::post('/remove/{id}', 'ReportController@destroy')
+        ->where('id', '[0-9]+');
+});
+
+Route::get('/reports', 'ReportController@store');
+
+Route::group([
     'prefix' => 'photos'
 ], function () {
     Route::post('/upload', 'PhotoController@upload');
@@ -113,4 +130,6 @@ Auth::routes();
 Route::post('login', 'UserController@signin');
 Route::post('registration', 'UserController@create');
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', function () {
+    return view('home');
+});
