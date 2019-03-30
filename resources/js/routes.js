@@ -27,107 +27,135 @@ import PublicRooms from './components/public/content/rooms_public';
 import PublicReports from './components/public/content/reports_public';
 import Contacts from './components/public/content/contacts';
 
+const hasPermission = (to, from, next) => {
+  let $isAuth = localStorage.getItem('csrf_token') || '';
+  if ($isAuth !== '') {
+    next();
+    return
+  }
+  next('/main');
+};
 
 export const routes = [
   {
     name: 'appointments',
     path: '/admin/appointments',
-    component: Appointments
+    component: Appointments,
+    beforeEnter: hasPermission
   },
   {
     name: 'appointment_form',
     path: '/admin/appointments/create',
-    component: AppointmentForm
+    component: AppointmentForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'appointment_form',
     path: '/admin/appointments/:id',
-    component: AppointmentForm
+    component: AppointmentForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'employees',
     path: '/admin/employees',
-    component: Employees
+    component: Employees,
+    beforeEnter: hasPermission
   },
   {
     name: 'employee_form',
     path: '/admin/employees/create',
-    component: EmployeeForm
+    component: EmployeeForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'employee_form',
     path: '/admin/employees/:id',
-    component: EmployeeForm
+    component: EmployeeForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'orders',
     path: '/admin/orders',
-    component: Orders
+    component: Orders,
+    beforeEnter: hasPermission
   },
   {
     name: 'order_form',
     path: '/admin/orders/create',
-    component: OrderForm
+    component: OrderForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'order_form',
     path: '/admin/orders/:id',
-    component: OrderForm
+    component: OrderForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'photos',
     path: '/admin/photos',
-    component: Photos
+    component: Photos,
+    beforeEnter: hasPermission
   },
   {
     name: 'photo_form',
     path: '/admin/photos/create',
-    component: PhotoForm
+    component: PhotoForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'rooms',
     path: '/admin/rooms',
-    component: Rooms
+    component: Rooms,
+    beforeEnter: hasPermission
   },
   {
     name: 'room_form',
     path: '/admin/rooms/create',
-    component: RoomForm
+    component: RoomForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'room_form',
     path: '/admin/rooms/:id',
-    component: RoomForm
+    component: RoomForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'users',
     path: '/admin/users',
-    component: Users
+    component: Users,
+    beforeEnter: hasPermission
   },
   {
     name: 'user_form',
     path: '/admin/users/create',
-    component: UserForm
+    component: UserForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'user_form',
     path: '/admin/users/:id',
-    component: UserForm
+    component: UserForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'reports',
     path: '/admin/reports',
-    component: Reports
+    component: Reports,
+    beforeEnter: hasPermission
   },
   {
     name: 'report_form',
     path: '/admin/reports/create',
-    component: ReportForm
+    component: ReportForm,
+    beforeEnter: hasPermission
   },
   {
     name: 'report_form',
     path: '/admin/reports/:id',
-    component: ReportForm
+    component: ReportForm,
+    beforeEnter: hasPermission
   },
 
   /** auth **/
