@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Photo;
+namespace App\Http\Resources\Room;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class PhotoCollection extends ResourceCollection
+class RoomsPublicCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -14,8 +14,6 @@ class PhotoCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        return [
-            'photos' => $this->collection
-        ];
+        return parent::toArray($request);
     }
 }

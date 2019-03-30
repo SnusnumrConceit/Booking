@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Report\ReportCollection;
 use App\User;
 use App\Models\Report;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
@@ -20,13 +22,14 @@ class ReportController extends Controller
                 'description' => $request->description,
                 'user_id' => $request->user_id
             ])->first();
-            if (! $report) {
+            if ($report) {
                 throw new \Exception('Такой отзыв уже присутствует в системе');
             }
-            $report = new Report($request->input());
-            $report->save();
+            $report = Report::create($request->input());
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'msg' => 'Отзыв успешно опубликован',
+                'report' => new \App\Http\Resources\Report\Report($report)
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -45,9 +48,9 @@ class ReportController extends Controller
     public function store(Request $request)
     {
         try {
-            $reports = Report::with('user')->paginate(10);
+            $reports = Report::with('user')->latest()->paginate(10);
             return response()->json([
-                'reports' => $reports
+                'reports' => new ReportCollection($reports)
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -57,18 +60,32 @@ class ReportController extends Controller
         }
     }
 
-    public function form_info()
+    public function search(Request $request)
     {
         try {
-            $users = User::all();
+            $reports = new Report();
+            if (isset($request->date)) {
+                $date = Carbon::parse($request->date)->format('Y-m-d');
+                $start = $date.' 00:00:00';
+                $end = $date.' 23:59:59';
+                $reports = $reports->whereBetween('created_at', [$start, $end]);
+            }
+            if (isset($request->filter)) {
+                $filter = json_decode($request->filter);
+
+                if (!empty($filter->name) && !empty($filter->type)) {
+                    $reports = $reports->orderBy($filter->name, $filter->type);
+                }
+            }
+            $reports = $reports->with('user')->paginate(10);
             return response()->json([
-                'users' => $users
+                'reports' => new ReportCollection($reports)
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
                 'msg' => $error->getMessage()
-            ], 500);
+            ]);
         }
     }
 
@@ -106,11 +123,11 @@ class ReportController extends Controller
             $report = Report::findOrFail($id);
             $report->fill([
                 'description' => $request->description,
-                'user_id' => $request->user_id
             ]);
             $report->save();
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'msg' => 'Отзыв успешно отредактирован',
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -131,7 +148,8 @@ class ReportController extends Controller
         try {
             $report = Report::findOrFail($id)->delete();
             return response()->json([
-                'status' => 'success'
+                'status' => 'success',
+                'msg' => 'Отзыв успешно удалён',
             ], 200);
         } catch (\Exception $error) {
             return response()->json([

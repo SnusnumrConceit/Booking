@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\Order\OrderCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserInfo extends JsonResource
@@ -14,6 +15,14 @@ class UserInfo extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'orders' => new OrderCollection($this->orders),
+            'full_name' => $this->getFullName($this)
+        ];
+    }
+
+    public function getFullName($user)
+    {
+        return $user->last_name.' '.$user->first_name.' '.$user->middle_name;
     }
 }

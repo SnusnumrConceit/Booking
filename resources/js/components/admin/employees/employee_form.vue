@@ -60,7 +60,7 @@
     data() {
       return {
         employee: {
-            birthday: Date.now()
+            birthday: new Date().toString()
         },
 
         appointments: [],

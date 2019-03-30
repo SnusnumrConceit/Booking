@@ -13,6 +13,9 @@ import PhotoForm from './components/admin/photos/photo_form';
 import Rooms from './components/admin/rooms/rooms';
 import RoomForm from './components/admin/rooms/room_form';
 
+import Reports from './components/admin/reports/reports';
+import ReportForm from './components/admin/reports/report_form';
+
 import Users from  './components/admin/users/users';
 import UserForm from  './components/admin/users/user_form';
 
@@ -111,6 +114,21 @@ export const routes = [
     path: '/admin/users/:id',
     component: UserForm
   },
+  {
+    name: 'reports',
+    path: '/admin/reports',
+    component: Reports
+  },
+  {
+    name: 'report_form',
+    path: '/admin/reports/create',
+    component: ReportForm
+  },
+  {
+    name: 'report_form',
+    path: '/admin/reports/:id',
+    component: ReportForm
+  },
 
   /** auth **/
   {
@@ -131,7 +149,7 @@ export const routes = [
     component: PublicRooms
   },
   {
-    name: 'reports',
+    name: 'public_reports',
     path: '/reports',
     component: PublicReports
   },

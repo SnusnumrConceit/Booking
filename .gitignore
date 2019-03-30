@@ -9,4 +9,6 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-.idea/*
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/vcs.xml

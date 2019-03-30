@@ -25,6 +25,12 @@
                                 Комнаты
                             </router-link>
                         </li>
+                        <li :class="{ 'active': menu.isActive.reports, 'has-sub': menu.isActive.reports}" @click="active('reports', 'menu')" v-if="access">
+                            <router-link :to="'/admin/reports'">
+                                <i class="far fa-image"></i>
+                                Отзывы
+                            </router-link>
+                        </li>
                         <li :class="{ 'active': menu.isActive.employees, 'has-sub': menu.isActive.employees}" @click="active('employees', 'menu')" v-if="accessAdmin">
                             <router-link :to="'/admin/employees'">
                                 <i class="fas fa-user-tie"></i>

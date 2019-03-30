@@ -4,7 +4,7 @@ export default {
     state: {
         token: localStorage.getItem('token') || '',
         user: JSON.parse(localStorage.getItem('user')) || '',
-        csrf_token: localStorage.getItem('token') || ''
+        csrf_token: localStorage.getItem('csrf_token') || ''
     },
 
     mutations: {

@@ -9,6 +9,7 @@ use App\Models\Photo;
 use App\Models\PhotoRoom;
 use App\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PhotoController extends Controller
 {
@@ -97,6 +98,25 @@ class PhotoController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
+    }
+
+    public function getPublicPhotos()
+    {
+        try {
+            $photos = DB::table('photos')->inRandomOrder()->limit(5)->get();
+            $result = [];
+            foreach ($photos as $photo) {
+                array_push($result, '/storage/'.$photo->url);
+            }
+            return response()->json([
+                'photos' => $result
+            ], 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'photos' => 'error',
                 'msg' => $error->getMessage()
             ]);
         }

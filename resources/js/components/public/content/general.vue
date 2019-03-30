@@ -4,7 +4,7 @@
             <div class="slider">
                 <vue-flux
                         :options="fluxOptions"
-                        :images="fluxImages"
+                        :images="photos"
                         :transitions="fluxTransitions"
                         ref="slider">
                     <flux-pagination slot="pagination"></flux-pagination>
@@ -38,8 +38,24 @@
         ],
         fluxTransitions: {
           transitionFade: Transitions.transitionFade
-        }
+        },
+        photos: []
       }
+    },
+    methods: {
+      async loadData() {
+        const response = await axios.get('/photos/public');
+        if (response.status !== 200 || response.data.status === 'error') {
+          this.$swal('Ошибка!', response.data.msg, 'warning');
+          return false;
+        }
+        this.photos = response.data.photos;
+        // this.$refs.slider.preloadImages(this.photos);
+      }
+    },
+
+    mounted() {
+      this.loadData();
     }
   }
 </script>

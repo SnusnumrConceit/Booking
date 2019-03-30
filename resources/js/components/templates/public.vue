@@ -5,7 +5,7 @@
                 <h2 class="col-2">
                     Booking.ru
                 </h2>
-                <div class="offset-7" v-if="! flag">
+                <div class="offset-7" v-if="! user">
                     <button class="btn btn-link" @click="showModal('registration')">
                         Регистрация
                     </button>
@@ -14,10 +14,10 @@
                     </button>
                 </div>
                 <div class="offset-7" v-else>
-                    <button class="btn btn-link">
+                    <button class="btn btn-link" @click="showModal('cabinet')">
                         {{ user.full_name }}
                     </button>
-                    <button class="btn btn-link">
+                    <button class="btn btn-link" @click="logout">
                         Выйти
                     </button>
                 </div>
@@ -41,7 +41,7 @@
                         </li>
                         <li :class="(tabs.reports) ? 'active' : ''"
                             class="nav-link col-3 tab"
-                            @click="activate('reports')">
+                            @click="activate('public_reports')">
                             <router-link :to="'/reports'">
                                 Отзывы
                             </router-link>
@@ -71,23 +71,32 @@
         <modal name="registration" height="auto">
             <registration></registration>
         </modal>
+        <modal name="cabinet">
+            <cabinet></cabinet>
+        </modal>
     </div>
 </template>
 
 <script>
-    import Login from '../public/auth/login_public';
-    import Registration from '../public/auth/registration_public';
+  import Login from '../public/auth/login_public';
+  import Registration from '../public/auth/registration_public';
+  import Cabinet from '../public/content/cabinet';
+
+  import { mapGetters, mapActions } from 'vuex';
+
   export default {
     name: "public",
-    components: { Login, Registration },
+    components: { Login, Registration, Cabinet },
     data() {
       return {
-        user: [],
-
-        flag: false,
 
         tabs: {},
       }
+    },
+    computed: {
+        ...mapGetters('Auth', {
+          'user': 'getUser'
+        })
     },
     methods: {
       showModal(modal) {
@@ -100,6 +109,7 @@
 
       clearStorage() {
         localStorage.removeItem('user');
+        this.setUser('');
         localStorage.removeItem('token');
         localStorage.removeItem('csrf_token');
       },
@@ -109,6 +119,10 @@
         this.tab[tab] = true;
         this.$router.push({ name: tab});
       },
+
+        ...mapActions('Auth', {
+          'setUser': 'setUser'
+        }),
 
       async logout() {
         const response = await axios.post('/logout');

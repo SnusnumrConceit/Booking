@@ -31,7 +31,7 @@
                 <div class="room-container" v-if="rooms.length">
                     <div class="card p-3" v-for="(room, room_index) in rooms" :key="room.id" @dblclick="showPhotos(room_index)">
                         {{ room.number }}
-                        <div class="room-photos-container" v-if="room.photos.length">
+                        <div class="room-photos-container" v-if="">
                             <div class="card col-2" v-for="(photo, photo_index) in room.photos">
                                 <img :src="photo.url" alt="" @click="showLightbox(room_index, photo.name)">
                                 <div class="card-footer">
@@ -72,10 +72,12 @@
 
 <script>
   import debounce from 'v-debounce';
+  import Lightbox from 'vue-my-photos';
 
   export default {
     name: "photos",
     directives: {debounce},
+    components: { 'lightbox': Lightbox},
     data() {
       return {
         rooms: [],
@@ -171,7 +173,7 @@
       },
 
       showLightbox(index, imageName) {
-            this.$refs.lightbox[index].show(imageName);
+        this.$refs.lightbox[index].show(imageName);
       },
 
       showPhotos(index) {

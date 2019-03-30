@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Photo\Photo;
+use App\Http\Resources\Photo\PhotoCollection;
+use App\Http\Resources\Room\RoomCollection;
 use App\Http\Resources\Room\RoomInfo;
 use App\Models\Room;
 use Illuminate\Http\Request;
@@ -162,6 +165,32 @@ class RoomController extends Controller
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Запись о комнате успешно удалена'
+            ], 200);
+        } catch (\Exception $error) {
+            return response()->json([
+                'status' => 'error',
+                'msg' => $error->getMessage()
+            ]);
+        }
+    }
+
+    /***
+     * Get rooms to customers view
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getPublicRooms(Request $request)
+    {
+        try {
+            $rooms = ($request->page) ? Room::whereDoesntHave('customers')->with('photos')->paginate(10) : Room::all();
+            foreach ($rooms as $room) {
+                foreach ($room->photos as $photo) {
+                    $photo->url = '/storage/'.$photo->url;
+                    $photo->name = $photo->url;
+                }
+            }
+            return response()->json([
+                'rooms' => $rooms
             ], 200);
         } catch (\Exception $error) {
             return response()->json([

@@ -14,7 +14,7 @@
             </div>
             <div class="form-group">
                 <label for="">Пароль</label>
-                <input class="form-control" v-model="login.password">
+                <input class="form-control" type="password" v-model="login.password">
             </div>
         </div>
         <div class="modal-footer">
@@ -26,6 +26,8 @@
 </template>
 
 <script>
+  import {mapActions} from 'vuex';
+
   export default {
     name: "login_public",
     data() {
@@ -39,19 +41,26 @@
 
     methods: {
       async authorize() {
-        const response = await axios.post('/login');
+        const response = await axios.post('/login', this.login);
         if (response.status !== 200 || response.data.status === 'error') {
           this.$swal('Ошибка!', response.data.msg, 'error');
           return false;
         } else {
           this.fillStorage(response.data);
+          this.$modal.hide('login');
+          this.login = {};
         }
       },
 
+      ...mapActions('Auth', {
+        'setUser': 'setUser'
+      }),
+
       fillStorage(data) {
-        localStorage.addItem('user', data.user);
-        localStorage.addItem('token', data.token);
-        localStorage.addItem('csrf_token', data.user.csrf_token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        this.setUser(data.user);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('csrf_token', data.user.csrf_token);
       },
     }
   }

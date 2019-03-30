@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Room extends Model
@@ -19,7 +20,7 @@ class Room extends Model
 
     public function customers()
     {
-        return $this->belongsToMany(User::class, 'users', 'user_id', 'id');
+        return $this->belongsToMany(User::class, 'orders', 'room_id', 'user_id');
     }
 
     public function free()

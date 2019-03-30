@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/admin', function () {
     return view('admin');
 });
 
@@ -70,6 +70,7 @@ Route::group([
     'prefix' => 'rooms'
 ], function () {
     Route::get('/', 'RoomController@store');
+    Route::get('/public', 'RoomController@getPublicRooms');
     Route::get('/search', 'RoomController@search');
     Route::get('/edit/{id}', 'RoomController@form_info')
         ->where('id', '[0-9]+');
@@ -100,7 +101,7 @@ Route::group([
 
 Route::group([
     'prefix' => 'reports',
-    'is' => 'superadmin'
+    'is' => 'superadmin|admin'
 ], function () {
     Route::get('/search', 'ReportController@search');
     Route::get('/edit/{id}', 'ReportController@edit')
@@ -124,12 +125,17 @@ Route::group([
     Route::post('/create', 'PhotoController@create');
     Route::get('/', 'PhotoController@store');
     Route::get('/search', 'PhotoController@search');
+    Route::get('/public', 'PhotoController@getPublicPhotos');
 });
 Auth::routes();
 
 Route::post('login', 'UserController@signin');
-Route::post('registration', 'UserController@create');
+Route::post('registration', 'UserController@registration');
 
 Route::get('/', function () {
     return view('home');
+});
+
+Route::group(['middleware' => 'auth'], function () {
+   Route::get('/users/info', 'UserController@info');
 });

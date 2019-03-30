@@ -75,7 +75,7 @@
     data() {
       return {
         order: {
-          note_date: Date.now(),
+          note_date: new Date().toString(),
           note_time: {
             HH: '00',
             mm: '00'

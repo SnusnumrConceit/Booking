@@ -36,7 +36,7 @@
             </div>
             <div class="form-group">
                 <label for="">Пароль</label>
-                <input type="text" class="form-control" v-model.trim="user.password">
+                <input type="password" class="form-control" v-model.trim="user.password">
             </div>
             <div class="form-group">
                 <button class="btn btn-outline-success" v-if="$route.params.id" @click.prevent="save()">
@@ -63,7 +63,7 @@
     data() {
       return {
         user: {
-          birthday: Date.now(),
+          birthday: new Date().toString(),
           role: ''
         },
 

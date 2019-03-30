@@ -22,6 +22,12 @@ class OrderController extends Controller
     public function create(Request $request)
     {
         try {
+            if (empty($request->status)) {
+                $request->status = 1;
+            }
+            if (empty($request->user_id)) {
+                $request->user_id = auth()->user()->id;
+            }
             $order = Order::where([
                 'user_id' => $request->user_id,
                 'room_id' => $request->room_id,

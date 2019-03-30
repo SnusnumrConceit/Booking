@@ -24,9 +24,9 @@ Vue.use(VueSweetalert2);
 import VModal from 'vue-js-modal'
 Vue.use(VModal);
 
-import Lightbox from 'vue-my-photos';
-Vue.component('lightbox', Lightbox);
-Vue.use(Lightbox);
+// import Lightbox from 'vue-my-photos';
+// Vue.component('lightbox', Lightbox);
+// Vue.use(Lightbox);
 
 
 /**
@@ -39,6 +39,8 @@ Vue.use(Lightbox);
 
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+
+Vue.use(require('vue-moment'));
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 

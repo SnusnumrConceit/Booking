@@ -10,10 +10,12 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kodeine\Acl\Models\Eloquent\Role;
+use Monolog\Handler\IFTTTHandler;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use JWTAuth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Order;
 
 
 class UserController extends Controller
@@ -111,6 +113,9 @@ class UserController extends Controller
             $user_role = new RoleUser();
             $user_role->where('user_id', $user->id)
                 ->delete();
+            if (empty($request->role)) {
+                $request->role = 1;
+            }
             $user_role->fill([
                 'role_id' => $request->role,
                 'user_id' => $user->id
@@ -214,13 +219,17 @@ class UserController extends Controller
         }
     }
 
-    public function info(int $id)
+    public function info()
     {
         try {
-         $user = User::with('orders')->findOrFail($id);
-         return response()->json([
+            if  (! Auth::user()) return abort(403);
+            $user = Auth::user();
+            $user->orders = Order::with('room')
+                ->where('user_id', Auth::id())
+                ->paginate(10);
+            return response()->json([
              'user_info' => new UserInfo($user)
-         ], 200);
+            ], 200);
 
         } catch (\Exception $error) {
             return response()->json([
