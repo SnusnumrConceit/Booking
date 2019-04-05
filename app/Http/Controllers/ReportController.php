@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Report\ReportFormRequest;
 use App\Http\Resources\Report\ReportCollection;
 use App\User;
 use App\Models\Report;
@@ -15,7 +16,7 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(ReportFormRequest $request)
     {
         try {
             $report = Report::where([
@@ -117,7 +118,7 @@ class ReportController extends Controller
      * @param  \App\Models\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(ReportFormRequest $request, int $id)
     {
         try {
             $report = Report::findOrFail($id);

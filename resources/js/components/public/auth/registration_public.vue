@@ -67,6 +67,13 @@
           password: '',
         },
 
+        errors: [],
+
+        swal: {
+          errors: [],
+          message: ``,
+        },
+
         ru: ru
       }
     },
@@ -74,7 +81,13 @@
       async registrate() {
         const response = await axios.post('/registration', this.registration);
         if (response.status !== 200 || response.data.status === 'error') {
-          this.$swal('Ошибка!', response.data.msg, 'error');
+          this.swal.errors = (response.data.errors !== undefined) ? response.data.errors : {};
+          this.swal.message = this.getSwalMessage();
+          this.$swal({
+            title: 'Ошибка!',
+            html: response.data.msg + this.swal.message,
+            type: 'error'
+          });
           return false;
         } else {
           this.fillStorage(response.data);
@@ -93,6 +106,16 @@
         localStorage.setItem('token', data.token);
         localStorage.setItem('csrf_token', data.user.csrf_token);
       },
+
+      getSwalMessage() {
+        return (this.swal.errors.length) ?
+            `<div class="alert alert-danger m-t-20">
+                        <ul class="p-l-20 p-r-20">
+                            ${Object.values(this.swal.errors).map(err => `<li class="text-danger">${err[0]}</li>`)}
+                        </ul>
+                </div>`
+            : '';
+      }
     }
   }
 </script>

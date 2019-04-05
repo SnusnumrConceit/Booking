@@ -87,28 +87,42 @@
 
         ru: ru,
 
-        errors: {
-          name: {
-            status: false,
-            msg: ''
-          },
-          price: {
-            status: false,
-            msg: ''
-          },
-          description: {
-            status: false,
-            msg: ''
-          }
+        // errors: {
+        //   name: {
+        //     status: false,
+        //     msg: ''
+        //   },
+        //   price: {
+        //     status: false,
+        //     msg: ''
+        //   },
+        //   description: {
+        //     status: false,
+        //     msg: ''
+        //   }
+        // }
+
+        errors: [],
+        swal: {
+          errors: [],
+          message: ``
         }
       }
     },
     methods: {
       async save() {
+        this.order.customer = this.order.user_id;
+        this.order.room = this.order.room_id;
         if (this.$route.params.id) {
           const response = await axios.post('/orders/update/' + this.$route.params.id, this.order);
           if (response.status !== 200 || response.data.status === 'error') {
-            this.$swal('Ошибка!', response.data.msg, 'error');
+            this.swal.errors = (response.data.errors !== undefined) ? response.data.errors : {};
+            this.swal.message = this.getSwalMessage();
+            this.$swal({
+              title: 'Ошибка!',
+              html: response.data.msg + this.swal.message,
+              type: 'error'
+            });
             return false;
           } else {
             this.$swal('Успешно!', response.data.msg, 'success');
@@ -118,7 +132,13 @@
         } else {
           const response = await axios.post('/orders/create', this.order);
           if (response.status !== 200 || response.data.status === 'error') {
-            this.$swal('Ошибка!', response.data.msg, 'error');
+            this.swal.errors = (response.data.errors !== undefined) ? response.data.errors : {};
+            this.swal.message = this.getSwalMessage();
+            this.$swal({
+              title: 'Ошибка!',
+              html: response.data.msg + this.swal.message,
+              type: 'error'
+            });
             return false;
           } else {
             this.$swal('Успешно!', response.data.msg, 'success');
@@ -149,6 +169,16 @@
           this.rooms = response.data.rooms;
           return true;
         }
+      },
+
+      getSwalMessage() {
+        return (Object.keys(this.swal.errors).length) ?
+            `<div class="alert alert-danger m-t-20">
+                        <ul class="p-l-20 p-r-20">
+                            ${Object.values(this.swal.errors).map(err => `<li class="text-danger">${err[0]}</li>`)}
+                        </ul>
+                </div>`
+            : '';
       }
     },
 

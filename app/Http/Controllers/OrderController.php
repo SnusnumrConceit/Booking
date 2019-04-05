@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Order\OrderFormRequest;
 use App\Http\Resources\Order\OrderCollection;
 use App\Mail\OrderShipped;
 use Illuminate\Support\Facades\Mail;
@@ -19,18 +20,19 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(OrderFormRequest $request)
     {
         try {
+            $request->validated();
             if (empty($request->status)) {
                 $request->status = 1;
             }
             if (empty($request->user_id)) {
-                $request->user_id = auth()->user()->id;
+                $request->customer = auth()->user()->id;
             }
             $order = Order::where([
-                'user_id' => $request->user_id,
-                'room_id' => $request->room_id,
+                'user_id' => $request->customer,
+                'room_id' => $request->room,
                 'status' => $request->status
             ])->count();
             if ($order) {
@@ -38,8 +40,8 @@ class OrderController extends Controller
             }
             $order = new Order();
             $order->fill([
-                'user_id' => $request->user_id,
-                'room_id' => $request->room_id,
+                'user_id' => $request->customer,
+                'room_id' => $request->room,
                 'status' => $request->status,
                 'note_date' => $this->convertDate($request->note_date, $request->note_time),
                 'days' => $request->days
@@ -140,8 +142,8 @@ class OrderController extends Controller
     {
         try {
             $order = Order::where([
-                'user_id' => $request->user_id,
-                'room_id' => $request->room_id,
+                'user_id' => $request->customer,
+                'room_id' => $request->room,
                 'status' => $request->status
             ])->count();
             if ($order) {

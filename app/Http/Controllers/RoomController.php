@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Room\RoomFormRequest;
 use App\Http\Resources\Photo\Photo;
 use App\Http\Resources\Photo\PhotoCollection;
 use App\Http\Resources\Room\RoomCollection;
@@ -16,9 +17,10 @@ class RoomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(RoomFormRequest $request)
     {
         try {
+            $request->validated();
             $room = Room::where('number', $request->number)->count();
             if ($room) {
                 throw new \Exception('Такая комната уже существует');
@@ -127,9 +129,10 @@ class RoomController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(RoomFormRequest $request, int $id)
     {
         try {
+            $request->validated();
             $room = Room::where([
                 'number' => $request->number,
                 'price' => $request->price,

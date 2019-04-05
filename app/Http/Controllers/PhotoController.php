@@ -21,7 +21,7 @@ class PhotoController extends Controller
     public function create(Request $request)
     {
         try {
-         $photo = $request->input();
+            $photo = $request->input();
             Image::move($photo['tmp_path'], $photo['destination']);
             $model = new Photo();
             $model->fill(['url' => str_replace('public/', '', $photo['destination'])]);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Employee\EmployeeFormRequest;
 use App\Http\Resources\Employee\EmployeeCollection;
 use App\Models\Appointment;
 use App\Models\Employee;
@@ -15,14 +16,15 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(EmployeeFormRequest $request)
     {
         try {
+            $validation = $request->validated();
             $employee = Employee::where([
-                'last_name' => $request->last_name,
-                'first_name' => $request->first_name,
-                'middle_name' => $request->middle_name,
-                'birthday' => $request->date_of_birth,
+                'last_name'     => $request->last_name,
+                'first_name'    => $request->first_name,
+                'middle_name'   => $request->middle_name,
+                'birthday'      => $request->date_of_birth,
             ])->count();
             if ($employee) {
                 throw new \Exception('Такой работник уже присутствует в системе');
@@ -38,7 +40,7 @@ class EmployeeController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -61,7 +63,7 @@ class EmployeeController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -88,7 +90,7 @@ class EmployeeController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -108,7 +110,7 @@ class EmployeeController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -123,7 +125,7 @@ class EmployeeController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -134,9 +136,10 @@ class EmployeeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(EmployeeFormRequest $request, int $id)
     {
         try {
+            $validation = $request->validated();
             $employee = Employee::where([
                 'last_name' => $request->last_name,
                 'first_name' => $request->first_name,
@@ -152,12 +155,12 @@ class EmployeeController extends Controller
             $employee->save();
             return response()->json([
                 'status' => 'success',
-                'msg' => 'Запись о работнике успешно обновлена'
+                'msg'    => 'Запись о работнике успешно обновлена'
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -178,7 +181,7 @@ class EmployeeController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }

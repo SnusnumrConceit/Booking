@@ -31,8 +31,8 @@
                 <div class="room-container" v-if="rooms.length">
                     <div class="card p-3" v-for="(room, room_index) in rooms" :key="room.id" @dblclick="showPhotos(room_index)">
                         {{ room.number }}
-                        <div class="room-photos-container" v-if="">
-                            <div class="card col-2" v-for="(photo, photo_index) in room.photos">
+                        <div class="room-photos-container">
+                            <div class="card col-2" v-for="(photo, photo_index) in room.photos.photos">
                                 <img :src="photo.url" alt="" @click="showLightbox(room_index, photo.name)">
                                 <div class="card-footer">
                                     <button class="btn btn-outline-danger" @click="remove(photo.id, photo_index, room_index)">
@@ -42,7 +42,7 @@
                             </div>
                             <lightbox id="mylightbox"
                                       ref="lightbox"
-                                      :images="room.photos"
+                                      :images="room.photos.photos"
                                       :directory="pictures.thumbnailDir"
                                       :timeoutDuration="5000"
                             ></lightbox>

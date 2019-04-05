@@ -2621,6 +2621,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "appointment_form",
   data: function data() {
@@ -2628,11 +2630,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       appointment: {
         name: ''
       },
-      errors: {
-        name: {
-          status: false,
-          msg: ''
-        }
+      // errors: {
+      //   name: {
+      //     status: false,
+      //     msg: ''
+      //   }
+      // },
+      swal: {
+        errors: [],
+        message: ""
       }
     };
   },
@@ -2648,7 +2654,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.$route.params.id) {
-                  _context.next = 13;
+                  _context.next = 16;
                   break;
                 }
 
@@ -2659,48 +2665,61 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context.sent;
 
                 if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 8;
+                  _context.next = 11;
                   break;
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
-                _context.next = 11;
-                break;
+                this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: response.data.msg + this.swal.message,
+                  type: 'error'
+                });
+                return _context.abrupt("return", false);
 
-              case 8:
+              case 11:
                 this.$swal('Успешно!', response.data.msg, 'success');
                 this.$router.push({
                   name: 'appointments'
                 });
                 return _context.abrupt("return", true);
 
-              case 11:
-                _context.next = 24;
+              case 14:
+                _context.next = 29;
                 break;
 
-              case 13:
-                _context.next = 15;
-                return axios.post('/appointments/create', this.appointment);
+              case 16:
+                _context.next = 18;
+                return axios.post('/appointments/create', {
+                  'appointment': this.appointment.name
+                });
 
-              case 15:
+              case 18:
                 _response = _context.sent;
 
                 if (!(_response.status !== 200 || _response.data.status === 'error')) {
-                  _context.next = 21;
+                  _context.next = 26;
                   break;
                 }
 
-                this.$swal('Ошибка!', _response.data.msg, 'error');
+                this.swal.errors = _response.data.errors !== undefined ? _response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: _response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 21:
+              case 26:
                 this.$swal('Успешно!', _response.data.msg, 'success');
                 this.$router.push({
                   name: 'appointments'
                 });
                 return _context.abrupt("return", true);
 
-              case 24:
+              case 29:
               case "end":
                 return _context.stop();
             }
@@ -2754,16 +2773,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return loadData;
-    }()
-  },
-  watch: {
-    'appointment.name': function appointmentName() {
-      if (!this.appointment.name.length) {
-        this.errors.status = true;
-        this.errors.msg = 'Наименование является обязательным полем';
-      }
+    }(),
+    getSwalMessage: function getSwalMessage() {
+      return Object.keys(this.swal.errors).length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
     }
   },
+  // watch: {
+  //   'appointment.name': function () {
+  //     if (! this.appointment.name.length) {
+  //       this.errors.status = true;
+  //       this.errors.msg = 'Наименование является обязательным полем';
+  //     }
+  //   }
+  // },
   created: function created() {
     if (this.$route.params.id) {
       this.loadData();
@@ -3178,19 +3202,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       },
       appointments: [],
       ru: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_2__["ru"],
-      errors: {
-        name: {
-          status: false,
-          msg: ''
-        },
-        price: {
-          status: false,
-          msg: ''
-        },
-        description: {
-          status: false,
-          msg: ''
-        }
+      // errors: {
+      //   name: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   price: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   description: {
+      //     status: false,
+      //     msg: ''
+      //   }
+      // }
+      errors: [],
+      swal: {
+        errors: [],
+        message: ""
       }
     };
   },
@@ -3206,7 +3235,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.$route.params.id) {
-                  _context.next = 14;
+                  _context.next = 16;
                   break;
                 }
 
@@ -3217,47 +3246,59 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context.sent;
 
                 if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 9;
+                  _context.next = 11;
                   break;
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
+                this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 9:
+              case 11:
                 this.$swal('Успешно!', response.data.msg, 'success');
                 this.$router.push({
                   name: 'employees'
                 });
                 return _context.abrupt("return", true);
 
-              case 12:
-                _context.next = 25;
+              case 14:
+                _context.next = 29;
                 break;
 
-              case 14:
-                _context.next = 16;
+              case 16:
+                _context.next = 18;
                 return axios.post('/employees/create', this.employee);
 
-              case 16:
+              case 18:
                 _response = _context.sent;
 
                 if (!(_response.status !== 200 || _response.data.status === 'error')) {
-                  _context.next = 22;
+                  _context.next = 26;
                   break;
                 }
 
-                this.$swal('Ошибка!', _response.data.msg, 'error');
+                this.swal.errors = _response.data.errors !== undefined ? _response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: _response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 22:
+              case 26:
                 this.$swal('Успешно!', _response.data.msg, 'success');
                 this.$router.push({
                   name: 'employees'
                 });
                 return _context.abrupt("return", true);
 
-              case 25:
+              case 29:
               case "end":
                 return _context.stop();
             }
@@ -3352,7 +3393,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return loadExtends;
-    }()
+    }(),
+    getSwalMessage: function getSwalMessage() {
+      return Object.keys(this.swal.errors).length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
+    }
   },
   created: function created() {
     if (this.$route.params.id) {
@@ -3811,19 +3857,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       customers: [],
       rooms: [],
       ru: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_2__["ru"],
-      errors: {
-        name: {
-          status: false,
-          msg: ''
-        },
-        price: {
-          status: false,
-          msg: ''
-        },
-        description: {
-          status: false,
-          msg: ''
-        }
+      // errors: {
+      //   name: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   price: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   description: {
+      //     status: false,
+      //     msg: ''
+      //   }
+      // }
+      errors: [],
+      swal: {
+        errors: [],
+        message: ""
       }
     };
   },
@@ -3838,59 +3889,74 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                this.order.customer = this.order.user_id;
+                this.order.room = this.order.room_id;
+
                 if (!this.$route.params.id) {
-                  _context.next = 14;
+                  _context.next = 18;
                   break;
                 }
 
-                _context.next = 3;
+                _context.next = 5;
                 return axios.post('/orders/update/' + this.$route.params.id, this.order);
 
-              case 3:
+              case 5:
                 response = _context.sent;
 
                 if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 9;
+                  _context.next = 13;
                   break;
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
+                this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 9:
+              case 13:
                 this.$swal('Успешно!', response.data.msg, 'success');
                 this.$router.push({
                   name: 'orders'
                 });
                 return _context.abrupt("return", true);
 
-              case 12:
-                _context.next = 25;
+              case 16:
+                _context.next = 31;
                 break;
 
-              case 14:
-                _context.next = 16;
+              case 18:
+                _context.next = 20;
                 return axios.post('/orders/create', this.order);
 
-              case 16:
+              case 20:
                 _response = _context.sent;
 
                 if (!(_response.status !== 200 || _response.data.status === 'error')) {
-                  _context.next = 22;
+                  _context.next = 28;
                   break;
                 }
 
-                this.$swal('Ошибка!', _response.data.msg, 'error');
+                this.swal.errors = _response.data.errors !== undefined ? _response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: _response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 22:
+              case 28:
                 this.$swal('Успешно!', _response.data.msg, 'success');
                 this.$router.push({
                   name: 'orders'
                 });
                 return _context.abrupt("return", true);
 
-              case 25:
+              case 31:
               case "end":
                 return _context.stop();
             }
@@ -3986,7 +4052,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return loadExtends;
-    }()
+    }(),
+    getSwalMessage: function getSwalMessage() {
+      return Object.keys(this.swal.errors).length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
+    }
   },
   created: function created() {
     this.loadExtends();
@@ -4917,11 +4988,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         description: '',
         user_id: 4
       },
-      errors: {
-        description: {
-          status: false,
-          msg: ''
-        }
+      // errors: {
+      //   description: {
+      //     status: false,
+      //     msg: ''
+      //   }
+      // },
+      errors: [],
+      swal: {
+        errors: [],
+        message: ""
       }
     };
   },
@@ -4937,7 +5013,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.$route.params.id) {
-                  _context.next = 13;
+                  _context.next = 16;
                   break;
                 }
 
@@ -4948,48 +5024,59 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context.sent;
 
                 if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 8;
+                  _context.next = 11;
                   break;
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
-                _context.next = 11;
-                break;
+                this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: response.data.msg + this.swal.message,
+                  type: 'error'
+                });
+                return _context.abrupt("return", false);
 
-              case 8:
+              case 11:
                 this.$swal('Успешно!', response.data.msg, 'success');
                 this.$router.push({
                   name: 'reports'
                 });
                 return _context.abrupt("return", true);
 
-              case 11:
-                _context.next = 24;
+              case 14:
+                _context.next = 29;
                 break;
 
-              case 13:
-                _context.next = 15;
+              case 16:
+                _context.next = 18;
                 return axios.post('/reports/create', this.report);
 
-              case 15:
+              case 18:
                 _response = _context.sent;
 
                 if (!(_response.status !== 200 || _response.data.status === 'error')) {
-                  _context.next = 21;
+                  _context.next = 26;
                   break;
                 }
 
-                this.$swal('Ошибка!', _response.data.msg, 'error');
+                this.swal.errors = _response.data.errors !== undefined ? _response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: _response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 21:
+              case 26:
                 this.$swal('Успешно!', _response.data.msg, 'success');
                 this.$router.push({
                   name: 'reports'
                 });
                 return _context.abrupt("return", true);
 
-              case 24:
+              case 29:
               case "end":
                 return _context.stop();
             }
@@ -5043,7 +5130,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return loadData;
-    }()
+    }(),
+    getSwalMessage: function getSwalMessage() {
+      return Object.keys(this.swal.errors).length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
+    }
   },
   watch: {
     'report.description': function reportDescription() {
@@ -5432,19 +5524,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       room: {},
-      errors: {
-        name: {
-          status: false,
-          msg: ''
-        },
-        price: {
-          status: false,
-          msg: ''
-        },
-        description: {
-          status: false,
-          msg: ''
-        }
+      // errors: {
+      //   name: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   price: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   description: {
+      //     status: false,
+      //     msg: ''
+      //   }
+      // }
+      errors: [],
+      swal: {
+        errors: [],
+        message: ""
       }
     };
   },
@@ -5460,7 +5557,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.$route.params.id) {
-                  _context.next = 14;
+                  _context.next = 16;
                   break;
                 }
 
@@ -5471,47 +5568,59 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context.sent;
 
                 if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 9;
+                  _context.next = 11;
                   break;
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
+                this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 9:
+              case 11:
                 this.$swal('Успешно!', response.data.msg, 'success');
                 this.$router.push({
                   name: 'rooms'
                 });
                 return _context.abrupt("return", true);
 
-              case 12:
-                _context.next = 25;
+              case 14:
+                _context.next = 29;
                 break;
 
-              case 14:
-                _context.next = 16;
+              case 16:
+                _context.next = 18;
                 return axios.post('/rooms/create', this.room);
 
-              case 16:
+              case 18:
                 _response = _context.sent;
 
                 if (!(_response.status !== 200 || _response.data.status === 'error')) {
-                  _context.next = 22;
+                  _context.next = 26;
                   break;
                 }
 
-                this.$swal('Ошибка!', _response.data.msg, 'error');
+                this.swal.errors = _response.data.errors !== undefined ? _response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: _response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 22:
+              case 26:
                 this.$swal('Успешно!', _response.data.msg, 'success');
                 this.$router.push({
                   name: 'rooms'
                 });
                 return _context.abrupt("return", true);
 
-              case 25:
+              case 29:
               case "end":
                 return _context.stop();
             }
@@ -5565,7 +5674,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return loadData;
-    }()
+    }(),
+    getSwalMessage: function getSwalMessage() {
+      return Object.keys(this.swal.errors).length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
+    }
   },
   created: function created() {
     if (this.$route.params.id) {
@@ -6066,19 +6180,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         role: ''
       },
       ru: vuejs_datepicker_dist_locale__WEBPACK_IMPORTED_MODULE_2__["ru"],
-      errors: {
-        name: {
-          status: false,
-          msg: ''
-        },
-        price: {
-          status: false,
-          msg: ''
-        },
-        description: {
-          status: false,
-          msg: ''
-        }
+      // errors: {
+      //   name: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   price: {
+      //     status: false,
+      //     msg: ''
+      //   },
+      //   description: {
+      //     status: false,
+      //     msg: ''
+      //   }
+      // },
+      errors: [],
+      swal: {
+        errors: [],
+        message: ""
       },
       roles: []
     };
@@ -6095,7 +6214,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             switch (_context.prev = _context.next) {
               case 0:
                 if (!this.$route.params.id) {
-                  _context.next = 14;
+                  _context.next = 16;
                   break;
                 }
 
@@ -6106,47 +6225,59 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 response = _context.sent;
 
                 if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 9;
+                  _context.next = 11;
                   break;
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
+                this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 9:
+              case 11:
                 this.$swal('Успешно!', response.data.msg, 'success');
                 this.$router.push({
                   name: 'users'
                 });
                 return _context.abrupt("return", true);
 
-              case 12:
-                _context.next = 25;
+              case 14:
+                _context.next = 29;
                 break;
 
-              case 14:
-                _context.next = 16;
+              case 16:
+                _context.next = 18;
                 return axios.post('/users/create', this.user);
 
-              case 16:
+              case 18:
                 _response = _context.sent;
 
                 if (!(_response.status !== 200 || _response.data.status === 'error')) {
-                  _context.next = 22;
+                  _context.next = 26;
                   break;
                 }
 
-                this.$swal('Ошибка!', _response.data.msg, 'error');
+                this.swal.errors = _response.data.errors !== undefined ? _response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: _response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 22:
+              case 26:
                 this.$swal('Успешно!', _response.data.msg, 'success');
                 this.$router.push({
                   name: 'users'
                 });
                 return _context.abrupt("return", true);
 
-              case 25:
+              case 29:
               case "end":
                 return _context.stop();
             }
@@ -6241,7 +6372,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return loadExtendData;
-    }()
+    }(),
+    getSwalMessage: function getSwalMessage() {
+      return Object.keys(this.swal.errors).length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
+    }
   },
   created: function created() {
     if (this.$route.params.id) {
@@ -6649,6 +6785,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       login: {
         email: '',
         password: ''
+      },
+      swal: {
+        errors: [],
+        message: ""
       }
     };
   },
@@ -6668,20 +6808,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               case 2:
                 response = _context.sent;
 
-                if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 8;
-                  break;
+                if (response.status !== 200 || response.data.status === 'error') {
+                  this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                  this.swal.message = this.getSwalMessage();
+                  this.$swal({
+                    title: 'Ошибка!',
+                    html: response.data.msg + this.swal.message,
+                    type: 'error'
+                  });
+                } else {
+                  this.fillStorage(response.data);
+                  this.$modal.hide('login');
+                  this.login = {};
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
-                return _context.abrupt("return", false);
-
-              case 8:
-                this.fillStorage(response.data);
-                this.$modal.hide('login');
-                this.login = {};
-
-              case 11:
+              case 4:
               case "end":
                 return _context.stop();
             }
@@ -6703,6 +6844,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.setUser(data.user);
       localStorage.setItem('token', data.token);
       localStorage.setItem('csrf_token', data.user.csrf_token);
+    },
+    getSwalMessage: function getSwalMessage() {
+      return this.swal.errors.length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
     }
   })
 });
@@ -6801,6 +6947,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         birthdate: new Date(),
         password: ''
       },
+      errors: [],
+      swal: {
+        errors: [],
+        message: ""
+      },
       ru: vuejs_datepicker_dist_locale___WEBPACK_IMPORTED_MODULE_3__["ru"]
     };
   },
@@ -6821,19 +6972,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 response = _context.sent;
 
                 if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 8;
+                  _context.next = 10;
                   break;
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
+                this.swal.errors = response.data.errors !== undefined ? response.data.errors : {};
+                this.swal.message = this.getSwalMessage();
+                this.$swal({
+                  title: 'Ошибка!',
+                  html: response.data.msg + this.swal.message,
+                  type: 'error'
+                });
                 return _context.abrupt("return", false);
 
-              case 8:
+              case 10:
                 this.fillStorage(response.data);
                 this.$modal.hide('registration');
                 this.registration = {};
 
-              case 11:
+              case 13:
               case "end":
                 return _context.stop();
             }
@@ -6855,6 +7012,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.setUser(data.user);
       localStorage.setItem('token', data.token);
       localStorage.setItem('csrf_token', data.user.csrf_token);
+    },
+    getSwalMessage: function getSwalMessage() {
+      return this.swal.errors.length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
     }
   })
 });
@@ -8060,6 +8222,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           status: false,
           message: ''
         }
+      },
+      swal: {
+        errors: [],
+        message: ""
       }
     };
   },
@@ -8083,22 +8249,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               case 2:
                 response = _context.sent;
 
-                if (!(response.status !== 200 || response.data.status === 'error')) {
-                  _context.next = 6;
-                  break;
+                if (response.status !== 200 || response.data.status === 'error') {
+                  this.errors = response.data.errors !== undefined ? response.data.errors : {};
+                  this.swal.message = this.getSwalMessage();
+                  this.$swal({
+                    title: 'Ошибка!',
+                    html: response.data.msg + this.swal.message,
+                    type: 'error'
+                  });
                 }
 
-                this.$swal('Ошибка!', response.data.msg, 'error');
-                return _context.abrupt("return", false);
-
-              case 6:
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('csrf_token', response.data.user.csrf_token);
                 this.setUser(response.data.user);
                 this.$router.push('/admin/rooms');
 
-              case 11:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -8111,38 +8278,40 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       return login;
-    }()
-  }),
-  watch: {
-    'user.email': function userEmail() {
-      var email_len = this.user.email.length;
-
-      if (!email_len) {
-        this.errors.email.status = false;
-        this.errors.message = 'Вы не ввели email';
-      }
-
-      if (!email_len < 10 && !email_len > 0) {
-        this.errors.email.status = false;
-        this.errors.message = 'Длина email не может быть менее 10 символов';
-      } //регулярка
-
-    },
-    'user.password': function userPassword() {
-      var pass_len = this.user.password.length;
-
-      if (!pass_len) {
-        this.errors.password.status = false;
-        this.errors.message = 'Вы не ввели пароль';
-      }
-
-      if (!pass_len < 6 && !email_len > 0) {
-        this.errors.password.status = false;
-        this.errors.message = 'Длина пароля не может быть менее 6 символов';
-      } //регулярка
-
+    }(),
+    getSwalMessage: function getSwalMessage() {
+      return this.swal.errors.length ? "<div class=\"alert alert-danger m-t-20\">\n                      <ul class=\"p-l-20 p-r-20\">\n                          ".concat(Object.values(this.swal.errors).map(function (err) {
+        return "<li class=\"text-danger\">".concat(err[0], "</li>");
+      }), "\n                      </ul>\n              </div>") : '';
     }
-  }
+  }) // watch: {
+  //     'user.email': function () {
+  //         let email_len = this.user.email.length;
+  //         if (!email_len) {
+  //             this.errors.email.status = false;
+  //             this.errors.message = 'Вы не ввели email';
+  //         }
+  //         if (!email_len < 10 && !email_len > 0) {
+  //             this.errors.email.status = false;
+  //             this.errors.message = 'Длина email не может быть менее 10 символов';
+  //         }
+  //         //регулярка
+  //     },
+  //
+  //     'user.password': function () {
+  //         let pass_len = this.user.password.length;
+  //         if (!pass_len) {
+  //             this.errors.password.status = false;
+  //             this.errors.message = 'Вы не ввели пароль';
+  //         }
+  //         if (!pass_len < 6 && !email_len > 0) {
+  //             this.errors.password.status = false;
+  //             this.errors.message = 'Длина пароля не может быть менее 6 символов';
+  //         }
+  //         //регулярка
+  //     }
+  // }
+
 });
 
 /***/ }),
@@ -47312,18 +47481,10 @@ var render = function() {
                 _vm.$set(_vm.appointment, "name", $event.target.value)
               }
             }
-          }),
-          _vm._v(" "),
-          _vm.errors.name.status
-            ? _c("span", { staticClass: "invalid-" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.errors.name.msg) +
-                    "\n                "
-                )
-              ])
-            : _vm._e(),
-          _vm._v(" "),
+          })
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group" }, [
           _vm.$route.params.id
             ? _c(
                 "button",
@@ -49022,7 +49183,10 @@ var render = function() {
                         "div",
                         { staticClass: "room-photos-container" },
                         [
-                          _vm._l(room.photos, function(photo, photo_index) {
+                          _vm._l(room.photos.photos, function(
+                            photo,
+                            photo_index
+                          ) {
                             return _c("div", { staticClass: "card col-2" }, [
                               _c("img", {
                                 attrs: { src: photo.url, alt: "" },
@@ -49066,7 +49230,7 @@ var render = function() {
                             refInFor: true,
                             attrs: {
                               id: "mylightbox",
-                              images: room.photos,
+                              images: room.photos.photos,
                               directory: _vm.pictures.thumbnailDir,
                               timeoutDuration: 5000
                             }
@@ -49170,17 +49334,7 @@ var render = function() {
                 _vm.$set(_vm.report, "description", $event.target.value)
               }
             }
-          }),
-          _vm._v(" "),
-          _vm.errors.description.status
-            ? _c("span", { staticClass: "invalid-" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.errors.description.msg) +
-                    "\n                "
-                )
-              ])
-            : _vm._e()
+          })
         ]),
         _vm._v(" "),
         _c("div", { staticClass: "form-group" }, [
@@ -77066,86 +77220,118 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+var hasPermission = function hasPermission(to, from, next) {
+  var $isAuth = localStorage.getItem('csrf_token') || '';
+
+  if ($isAuth !== '') {
+    next();
+    return;
+  }
+
+  next('/main');
+};
+
 var routes = [{
   name: 'appointments',
   path: '/admin/appointments',
-  component: _components_admin_appointments_appointments__WEBPACK_IMPORTED_MODULE_0__["default"]
+  component: _components_admin_appointments_appointments__WEBPACK_IMPORTED_MODULE_0__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'appointment_form',
   path: '/admin/appointments/create',
-  component: _components_admin_appointments_appointment_form__WEBPACK_IMPORTED_MODULE_1__["default"]
+  component: _components_admin_appointments_appointment_form__WEBPACK_IMPORTED_MODULE_1__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'appointment_form',
   path: '/admin/appointments/:id',
-  component: _components_admin_appointments_appointment_form__WEBPACK_IMPORTED_MODULE_1__["default"]
+  component: _components_admin_appointments_appointment_form__WEBPACK_IMPORTED_MODULE_1__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'employees',
   path: '/admin/employees',
-  component: _components_admin_employees_employees__WEBPACK_IMPORTED_MODULE_2__["default"]
+  component: _components_admin_employees_employees__WEBPACK_IMPORTED_MODULE_2__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'employee_form',
   path: '/admin/employees/create',
-  component: _components_admin_employees_employee_form__WEBPACK_IMPORTED_MODULE_3__["default"]
+  component: _components_admin_employees_employee_form__WEBPACK_IMPORTED_MODULE_3__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'employee_form',
   path: '/admin/employees/:id',
-  component: _components_admin_employees_employee_form__WEBPACK_IMPORTED_MODULE_3__["default"]
+  component: _components_admin_employees_employee_form__WEBPACK_IMPORTED_MODULE_3__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'orders',
   path: '/admin/orders',
-  component: _components_admin_orders_orders__WEBPACK_IMPORTED_MODULE_4__["default"]
+  component: _components_admin_orders_orders__WEBPACK_IMPORTED_MODULE_4__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'order_form',
   path: '/admin/orders/create',
-  component: _components_admin_orders_order_form__WEBPACK_IMPORTED_MODULE_5__["default"]
+  component: _components_admin_orders_order_form__WEBPACK_IMPORTED_MODULE_5__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'order_form',
   path: '/admin/orders/:id',
-  component: _components_admin_orders_order_form__WEBPACK_IMPORTED_MODULE_5__["default"]
+  component: _components_admin_orders_order_form__WEBPACK_IMPORTED_MODULE_5__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'photos',
   path: '/admin/photos',
-  component: _components_admin_photos_photos__WEBPACK_IMPORTED_MODULE_6__["default"]
+  component: _components_admin_photos_photos__WEBPACK_IMPORTED_MODULE_6__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'photo_form',
   path: '/admin/photos/create',
-  component: _components_admin_photos_photo_form__WEBPACK_IMPORTED_MODULE_7__["default"]
+  component: _components_admin_photos_photo_form__WEBPACK_IMPORTED_MODULE_7__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'rooms',
   path: '/admin/rooms',
-  component: _components_admin_rooms_rooms__WEBPACK_IMPORTED_MODULE_8__["default"]
+  component: _components_admin_rooms_rooms__WEBPACK_IMPORTED_MODULE_8__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'room_form',
   path: '/admin/rooms/create',
-  component: _components_admin_rooms_room_form__WEBPACK_IMPORTED_MODULE_9__["default"]
+  component: _components_admin_rooms_room_form__WEBPACK_IMPORTED_MODULE_9__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'room_form',
   path: '/admin/rooms/:id',
-  component: _components_admin_rooms_room_form__WEBPACK_IMPORTED_MODULE_9__["default"]
+  component: _components_admin_rooms_room_form__WEBPACK_IMPORTED_MODULE_9__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'users',
   path: '/admin/users',
-  component: _components_admin_users_users__WEBPACK_IMPORTED_MODULE_12__["default"]
+  component: _components_admin_users_users__WEBPACK_IMPORTED_MODULE_12__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'user_form',
   path: '/admin/users/create',
-  component: _components_admin_users_user_form__WEBPACK_IMPORTED_MODULE_13__["default"]
+  component: _components_admin_users_user_form__WEBPACK_IMPORTED_MODULE_13__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'user_form',
   path: '/admin/users/:id',
-  component: _components_admin_users_user_form__WEBPACK_IMPORTED_MODULE_13__["default"]
+  component: _components_admin_users_user_form__WEBPACK_IMPORTED_MODULE_13__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'reports',
   path: '/admin/reports',
-  component: _components_admin_reports_reports__WEBPACK_IMPORTED_MODULE_10__["default"]
+  component: _components_admin_reports_reports__WEBPACK_IMPORTED_MODULE_10__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'report_form',
   path: '/admin/reports/create',
-  component: _components_admin_reports_report_form__WEBPACK_IMPORTED_MODULE_11__["default"]
+  component: _components_admin_reports_report_form__WEBPACK_IMPORTED_MODULE_11__["default"],
+  beforeEnter: hasPermission
 }, {
   name: 'report_form',
   path: '/admin/reports/:id',
-  component: _components_admin_reports_report_form__WEBPACK_IMPORTED_MODULE_11__["default"]
+  component: _components_admin_reports_report_form__WEBPACK_IMPORTED_MODULE_11__["default"],
+  beforeEnter: hasPermission
 },
 /** auth **/
 {

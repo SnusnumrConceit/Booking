@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ControllerException;
+use App\Http\Requests\Auth\LoginFormRequest;
+use App\Http\Requests\Auth\RegistrationFormRequest;
+use App\Http\Requests\User\UserFormRequest;
 use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserInfo;
 use App\Http\Resources\User\UserVuex;
@@ -13,14 +17,13 @@ use Kodeine\Acl\Models\Eloquent\Role;
 use Monolog\Handler\IFTTTHandler;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use JWTAuth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 
 
 class UserController extends Controller
 {
-    public function signin(Request $request)
+    public function signin(LoginFormRequest $request)
     {
 //        $user = User::where([
 //            'email' => $request->email,
@@ -32,10 +35,11 @@ class UserController extends Controller
 //                'msg' => 'Неверные данные'
 //            ]);
 //        }
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
+        $request->validated();
+//        $this->validate($request, [
+//            'email' => 'required|email',
+//            'password' => 'required'
+//        ]);
         $credentials = $request->only('email', 'password');
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
@@ -59,10 +63,10 @@ class UserController extends Controller
         }
     }
 
-    public function registration(Request $request)
+    public function registration(RegistrationFormRequest $request)
     {
-        $result = $this->create($request);
-        return $this->signin($request);
+        $result = $this->create(UserFormRequest::createFrom($request));
+        return $this->signin(LoginFormRequest::createFrom($request));
     }
 
     public function logout()
@@ -91,23 +95,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(UserFormRequest $request)
     {
+        $validation = $request->validated();
         try {
             $user = User::where([
                 'email' => $request->email
             ])->count();
             if ($user) {
-                throw new \Exception('Такой пользователь существует в системе');
+                throw new ControllerException('Такой пользователь существует в системе');
             }
             $user = new User();
             $user->fill([
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'last_name' => $request->last_name,
-                'first_name' => $request->first_name,
-                'middle_name' => $request->middle_name,
-                'birthday' => $this->convertDate($request->birthday)
+                'email'         => $request->email,
+                'password'      => bcrypt($request->password),
+                'last_name'     => $request->last_name,
+                'first_name'    => $request->first_name,
+                'middle_name'   => $request->middle_name,
+                'birthday'      => $this->convertDate($request->birthday)
             ]);
             $user->save();
             $user_role = new RoleUser();
@@ -123,12 +128,12 @@ class UserController extends Controller
             $user_role->save();
             return response()->json([
                 'status' => 'success',
-                'msg' => 'Пользователь успешно добавлен'
+                'msg'    => 'Пользователь успешно добавлен'
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -149,7 +154,7 @@ class UserController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -175,7 +180,7 @@ class UserController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -199,7 +204,7 @@ class UserController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -234,7 +239,7 @@ class UserController extends Controller
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',
-                'msg' => $error->getMessage()
+                'msg'    => $error->getMessage()
             ]);
         }
     }
@@ -242,13 +247,14 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Requests\User\UserFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(UserFormRequest $request, int $id)
     {
         try {
+            $validation = $request->validated();
             $user = User::where([
                 'email' => $request->email
             ])->count();
@@ -258,7 +264,7 @@ class UserController extends Controller
             $user = User::findOrFail($id);
             $user->fill([
                 'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'password' => bcrypt($request->password),
                 'last_name' => $request->last_name,
                 'first_name' => $request->first_name,
                 'middle_name' => $request->middle_name,

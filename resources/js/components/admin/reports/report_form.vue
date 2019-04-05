@@ -7,9 +7,9 @@
                     <textarea class="form-control"
                               v-model="report.description">
                     </textarea>
-                    <span class="invalid-" v-if="errors.description.status">
-                        {{ errors.description.msg }}
-                    </span>
+                    <!--<span class="invalid-" v-if="errors.description.status">-->
+                        <!--{{ errors.description.msg }}-->
+                    <!--</span>-->
                 </div>
                 <div class="form-group">
                     <button class="btn btn-outline-success" v-if="$route.params.id" @click.prevent="save()">
@@ -37,12 +37,19 @@
           user_id: 4
         },
 
-        errors: {
-          description: {
-            status: false,
-            msg: ''
-          }
-        }
+        // errors: {
+        //   description: {
+        //     status: false,
+        //     msg: ''
+        //   }
+        // },
+
+        errors: [],
+
+        swal: {
+          errors: [],
+          message: ``
+        },
       }
     },
     methods: {
@@ -50,7 +57,14 @@
         if (this.$route.params.id) {
           const response = await axios.post('/reports/update/' + this.$route.params.id, this.report);
           if (response.status !== 200 || response.data.status === 'error') {
-            this.$swal('Ошибка!', response.data.msg, 'error');
+            this.swal.errors = (response.data.errors !== undefined) ? response.data.errors : {};
+            this.swal.message = this.getSwalMessage();
+            this.$swal({
+              title: 'Ошибка!',
+              html: response.data.msg + this.swal.message,
+              type: 'error'
+            });
+            return false;
           } else {
             this.$swal('Успешно!', response.data.msg, 'success');
             this.$router.push({ name: 'reports'});
@@ -59,7 +73,13 @@
         } else {
           const response = await axios.post('/reports/create', this.report);
           if (response.status !== 200 || response.data.status === 'error') {
-            this.$swal('Ошибка!', response.data.msg, 'error');
+            this.swal.errors = (response.data.errors !== undefined) ? response.data.errors : {};
+            this.swal.message = this.getSwalMessage();
+            this.$swal({
+              title: 'Ошибка!',
+              html: response.data.msg + this.swal.message,
+              type: 'error'
+            });
             return false;
           } else {
             this.$swal('Успешно!', response.data.msg, 'success');
@@ -78,6 +98,16 @@
           this.report = response.data.report;
           return true;
         }
+      },
+
+      getSwalMessage() {
+        return (Object.keys(this.swal.errors).length) ?
+            `<div class="alert alert-danger m-t-20">
+                        <ul class="p-l-20 p-r-20">
+                            ${Object.values(this.swal.errors).map(err => `<li class="text-danger">${err[0]}</li>`)}
+                        </ul>
+                </div>`
+            : '';
       }
     },
     watch: {

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ControllerException;
+use App\Http\Requests\Appointment\AppointmentFormRequest;
+use App\Http\Requests\Employee\EmployeeFormRequest;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 
@@ -12,16 +15,17 @@ class AppointmentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(AppointmentFormRequest $request)
     {
         try {
-            $appointment = Appointment::where('name', $request->name)->count();
+            $validation = $request->validated();
+            $appointment = Appointment::where('name', $request->appointment)->count();
             if ($appointment) {
-                throw new \Exception('Такая должность уже существует');
+                throw (new ControllerException('Такая должность уже существует'));
             }
             $appointment = new Appointment();
             $appointment->fill([
-                'name' => $request->name
+                'name' => $request->appointment
             ]);
             $appointment->save();
             return response()->json([
@@ -113,9 +117,10 @@ class AppointmentController extends Controller
      * @param  \App\appointment  $appointment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, int $id)
+    public function update(AppointmentFormRequest $request, int $id)
     {
         try {
+            $validation = $request->validated();
             $appointment = Appointment::where('name', $request->name)->count();
             if ($appointment) {
                 throw new \Exception('Такая должность уже существует');
