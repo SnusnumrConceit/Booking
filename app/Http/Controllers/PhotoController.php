@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\WriteAudit;
 use App\Http\Resources\Photo\PhotoCollection;
 use App\Http\Resources\Room\RoomCollection;
 use App\Models\Room;

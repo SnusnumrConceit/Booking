@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\WriteAudit;
 use App\Exceptions\ControllerException;
 use App\Http\Requests\Auth\LoginFormRequest;
 use App\Http\Requests\Auth\RegistrationFormRequest;
@@ -19,6 +20,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
+use Validator;
 
 
 class UserController extends Controller
@@ -35,7 +37,12 @@ class UserController extends Controller
 //                'msg' => 'Неверные данные'
 //            ]);
 //        }
-        $request->validated();
+//        $request->validated();
+        Validator::make($request->all(),
+            [
+                'email'     =>  'required|email|min:10|max:100',
+                'password'  =>  'required|min:8|max:50'
+            ])->validate();
 //        $this->validate($request, [
 //            'email' => 'required|email',
 //            'password' => 'required'
@@ -49,7 +56,12 @@ class UserController extends Controller
                 ]);
             }
             Auth::attempt($credentials, true);
-            $user = Auth::user();
+            $user = auth()->user();
+            event(new WriteAudit((object)[
+                'id'    => $user->id,
+                'name'  => $user->email,
+                'type'  => 'user'
+            ], 1, 19));
 //            $user->perms = Role::find($user->roles[0]->id)->getPermissions();
             return response()->json([
                 'token' => $token,
@@ -65,14 +77,22 @@ class UserController extends Controller
 
     public function registration(RegistrationFormRequest $request)
     {
+        $request->validated();
         $result = $this->create(UserFormRequest::createFrom($request));
+//        $result = $this->create(RegistrationFormRequest::createFrom(UserFormRequest::class, $request));
         return $this->signin(LoginFormRequest::createFrom($request));
     }
 
     public function logout()
     {
         try {
+            $user = auth()->user();
             auth()->logout();
+            event(new WriteAudit((object)[
+                'id'    => $user->id,
+                'name'  => $user->email,
+                'type'  => 'user'
+            ], 1, 20));
             return response()->json([
                 'status' => 'success'
             ], 200);
@@ -97,7 +117,15 @@ class UserController extends Controller
      */
     public function create(UserFormRequest $request)
     {
-        $validation = $request->validated();
+        Validator::make($request->all(), [
+            'email'         => 'required|email|min:10|max:255',
+            'password'      => 'required|min:8|max:50',
+            'last_name'     => 'required|min:2|max:50',
+            'first_name'    => 'required|min:4|max:25',
+            'middle_name'   => 'required|min:4|max:40',
+            'birthday'      => 'required|date'
+        ])->validate();
+//        $validation = $request->validated();
         try {
             $user = User::where([
                 'email' => $request->email
@@ -126,6 +154,11 @@ class UserController extends Controller
                 'user_id' => $user->id
             ]);
             $user_role->save();
+            event(new WriteAudit((object)[
+                'id'    => $user->id,
+                'name'  => $user->email,
+                'type'  => 'user'
+            ], 1, 1));
             return response()->json([
                 'status' => 'success',
                 'msg'    => 'Пользователь успешно добавлен'
@@ -224,13 +257,13 @@ class UserController extends Controller
         }
     }
 
-    public function info()
+    public function info(Request $request)
     {
         try {
             if  (! Auth::user()) return abort(403);
-            $user = Auth::user();
+            $user = (empty($request->id)) ? $user = Auth::user() : User::findOrFail($request->id);
             $user->orders = Order::with('room')
-                ->where('user_id', Auth::id())
+                ->where('user_id', $user->id)
                 ->paginate(10);
             return response()->json([
              'user_info' => new UserInfo($user)
@@ -279,6 +312,11 @@ class UserController extends Controller
                 'user_id' => $user->id
             ]);
             $user_role->save();
+            event(new WriteAudit((object)[
+                'id'    => $user->id,
+                'name'  => $user->email,
+                'type'  => 'user'
+            ], 1, 2));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Сведения о пользователе успешно обновлёны'
@@ -300,7 +338,12 @@ class UserController extends Controller
     public function destroy($id)
     {
         try {
-            User::findOrFail($id)->delete();
+            $user = User::findOrFail($id);
+            $user->delete();
+            event(new WriteAudit((object)[
+                'name'  => $user->email,
+                'type'  => 'user'
+            ], 1, 3));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Пользователь успешно удалён'

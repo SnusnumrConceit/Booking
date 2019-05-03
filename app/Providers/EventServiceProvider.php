@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\FreeRoom;
+use App\Events\OrderComplete;
 use App\Events\WriteAudit;
 use App\Listeners\AuditListener;
+use App\Listeners\FreeRoomListener;
+use App\Listeners\OrderListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -22,6 +26,12 @@ class EventServiceProvider extends ServiceProvider
         ],
         WriteAudit::class => [
             AuditListener::class
+        ],
+        OrderComplete::class => [
+            OrderListener::class
+        ],
+        FreeRoom::class =>  [
+            FreeRoomListener::class
         ]
     ];
 

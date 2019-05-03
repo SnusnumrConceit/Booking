@@ -16,4 +16,10 @@ class Employee extends Model
     {
         return $this->belongsTo(Appointment::class, 'appointment_id', 'id');
     }
+
+    public function sortedAppointment($sort)
+    {
+        return $this->join('appointments', 'employees.appointment_id', '=', 'appointments.id')
+            ->orderBy('appointments.name', $sort)->select('employees.*');
+    }
 }

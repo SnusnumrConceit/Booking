@@ -19,14 +19,11 @@ class ReportController extends Controller
     public function create(ReportFormRequest $request)
     {
         try {
-            $report = Report::where([
+            $user_id = (empty ($request->user_id)) ? auth()->id() : $request->user_id;
+            $report = Report::create([
                 'description' => $request->description,
-                'user_id' => $request->user_id
-            ])->first();
-            if ($report) {
-                throw new \Exception('Такой отзыв уже присутствует в системе');
-            }
-            $report = Report::create($request->input());
+                'user_id' => $user_id
+            ]);
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Отзыв успешно опубликован',
@@ -36,7 +33,7 @@ class ReportController extends Controller
             return response()->json([
                 'status' => 'error',
                 'msg' => $error->getMessage()
-            ], 500);
+            ]);
         }
     }
 

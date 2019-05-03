@@ -24,7 +24,7 @@
                         <label for="email" class="col-md-4 col-form-label text-md-right">Пароль</label>
 
                         <div class="col-md-6">
-                            <input type="text"
+                            <input type="password"
                                    class="form-control"
                                    v-model="user.password">
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\WriteAudit;
 use App\Http\Requests\Employee\EmployeeFormRequest;
 use App\Http\Resources\Employee\EmployeeCollection;
 use App\Models\Appointment;
@@ -33,6 +34,11 @@ class EmployeeController extends Controller
             $employee->fill($request->input());
             $employee->birthday = Carbon::parse($employee->birthday)->format('Y-m-d');
             $employee->save();
+            event(new WriteAudit((object)[
+                'id'    => $employee->id,
+                'name' => $employee->last_name . ' ' . $employee->first_name,
+                'type'  => 'employee'
+            ], 1, 7));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Работник успешно добавлен'
@@ -72,7 +78,7 @@ class EmployeeController extends Controller
     {
         try {
             $employees = new Employee();
-            $employees = $employees->with('appointment');
+//            $employees = $employees->with('appointment');
             if (isset($request->keyword)) {
                 $employees = $employees->where('last_name', 'LIKE', $request->keyword.'%');
             }
@@ -80,7 +86,11 @@ class EmployeeController extends Controller
                 $filter = json_decode($request->filter);
 
                 if (!empty($filter->name) && !empty($filter->type)) {
-                    $employees = $employees->orderBy($filter->name, $filter->type);
+                    if ($filter->name === 'appointment') {
+                        $employees = (new Employee())->sortedAppointment($filter->type);
+                    } else {
+                        $employees = $employees->orderBy($filter->name, $filter->type);
+                    }
                 }
             }
             $employees = $employees->paginate(10);
@@ -153,6 +163,11 @@ class EmployeeController extends Controller
             $employee->fill($request->input());
             $employee->birthday = Carbon::parse($employee->birthday)->format('Y-m-d');
             $employee->save();
+            event(new WriteAudit((object)[
+                'id'    => $employee->id,
+                'name' => $employee->last_name . ' ' . $employee->first_name,
+                'type'  => 'employee'
+            ], 1, 8));
             return response()->json([
                 'status' => 'success',
                 'msg'    => 'Запись о работнике успешно обновлена'
@@ -173,7 +188,12 @@ class EmployeeController extends Controller
     public function destroy(int $id)
     {
         try {
-            $employee = Employee::findOrFail($id)->delete();
+            $employee = Employee::findOrFail($id);
+            $employee->delete();
+            event(new WriteAudit((object)[
+                'name' => $employee->last_name . ' ' . $employee->first_name,
+                'type'  => 'employee'
+            ], 1, 9));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Запись о работнике успешно удалена'

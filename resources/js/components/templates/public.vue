@@ -62,7 +62,7 @@
         </div>
         <footer>
             <div class="text-center">
-                Разработано 2019 году Митишей Рогожиным
+                Разработано в 2019 году
             </div>
         </footer>
         <modal name="login" height="auto">

@@ -25,6 +25,17 @@ class Room extends Model
 
     public function free()
     {
-        return $this->whereDoesntHave('customers');
+        return $this->where('free', 1);
+//        return $this->whereDoesntHave('customers');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'room_id', 'id');
+    }
+
+    public function latest_order()
+    {
+        return $this->hasMany(Order::class, 'room_id', 'id')->latest('created_at');
     }
 }

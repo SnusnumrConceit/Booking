@@ -160,7 +160,7 @@
       },
 
       async loadExtends() {
-        const response = await axios.get('/orders/form_info');
+        const response = await axios.get('/orders/form_info', { params: { id: this.$route.params.id }});
         if (response.status !== 200 || response.data.status === 'error') {
           this.$swal('Ошибка!', response.data.msg, 'error');
           return false;

@@ -37,7 +37,13 @@
                     </button>
                     <transition name="fade">
                         <div class="form-group m-t-20" v-if="show">
-                            <textarea cols="30" rows="10" v-model="report.description" class="form-control col-12 m-b-20"></textarea>
+                            <textarea cols="30"
+                                      rows="10"
+                                      v-model="report.description"
+                                      class="form-control col-12 m-b-20" :class="errors.report.status ? 'has-error' : ''"></textarea>
+                            <span class="invalid-feedback" v-if="errors.report.status">
+                                {{ errors.report.msg }}
+                            </span>
                             <button class="btn btn-outline-primary" @click="publish()">
                                 Опубликовать
                             </button>
@@ -51,6 +57,8 @@
 </template>
 
 <script>
+
+  import {mapGetters} from 'vuex';
   export default {
     name: "reports_public",
     data() {
@@ -59,7 +67,7 @@
 
         report: {
           description: '',
-          user_id: 4,
+          user_id: '',
         },
 
         show: false,
@@ -68,7 +76,20 @@
           page: 1,
           last_page: 1,
         },
+
+        errors: {
+          report: {
+            status: false,
+            msg: ''
+          }
+        }
       }
+    },
+
+    computed: {
+      ...mapGetters('Auth', {
+        'user': 'getUser'
+      })
     },
 
     methods: {
@@ -83,6 +104,7 @@
       },
 
       async publish() {
+        if (! this.validate()) return false;
         const response = await axios.post('/reports/create', this.report);
         if (response.status !== 200 || response.data.status === 'error') {
           this.$swal('Ошибка!', response.data.msg, 'error');
@@ -105,6 +127,41 @@
           this.reports = response.data.reports.data;
           this.pagination.last_page = response.data.reports.last_page;
         }
+      },
+
+      validate() {
+        console.log(Object.keys(this.user).length);
+        if (! typeof this.user === 'object' || ! Object.keys(this.user).length) {
+          this.setError('Вы не авторизованы!');
+          return false;
+        }
+        if (this.report.description.length === 0) {
+          this.setError('Вы не указали отзыв!');
+          return false;
+        }
+        if (this.report.description.length <= 2 || this.report.description.length >= 500) {
+          this.setError('Отзыв должен быть длинной от 2 до 500 символов!');
+          return false;
+        }
+        this.errors.status = false;
+        return true;
+      },
+
+      setError(message) {
+        this.errors.report.status = true;
+        this.errors.report.msg = message;
+      }
+    },
+
+    watch: {
+      'report.description': function (after, before) {
+        if (after.length === 0 && after == before) {
+          this.validate();
+        }
+        if (after.length <= 2 || after.length >= 500) {
+          this.validate();
+        }
+        return this.errors.report.status = false;
       }
     },
 
@@ -121,5 +178,12 @@
     .card {
         padding: 0px;
         border-radius: 14px;        
+    }
+    .has-error {
+        border-color: #dc3545;
+    }
+    .invalid-feedback {
+        display: block;
+        font-size: 1em;
     }
 </style>

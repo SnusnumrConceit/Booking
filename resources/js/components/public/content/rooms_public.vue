@@ -20,7 +20,7 @@
                                 </div>
                                 <div class="row float-right">
                                     <h3 class="p-l-15">{{ room.price }}</h3>
-                                    <button class="btn btn-primary" @click="showModal(room)">
+                                    <button :class="(room.free) ? 'btn btn-primary' : 'btn btn-secondary'" @click="showModal(room)" :disabled="! room.free">
                                         Забронировать
                                     </button>
                                 </div>
@@ -65,6 +65,19 @@
                 <p>Покупатель: {{ user.full_name }}</p>
                 <p>Номер: {{ order.number }}</p>
                 <div class="form-group">
+                    <label for="">Дата и время заселения</label>
+                    <datepicker v-model="order.note_date"
+                                :language="ru"
+                                :monday-first="true"
+                                :required="true"
+                                :bootstrap-styling="true">
+                    </datepicker>
+                    <vue-timepicker :minute-interval="5"
+                                    format="HH:mm"
+                                    v-model="order.note_time">
+                    </vue-timepicker>
+                </div>
+                <div class="form-group">
                     <label for="">Пребывание</label>
                     <input type="number" class="form-control" v-model.number="order.days" @change="amount">
                 </div>
@@ -83,13 +96,18 @@
   import {mapGetters, mapActions} from 'vuex';
   import truncate from 'vue-truncate-collapsed';
   import Lightbox from 'vue-my-photos';
+  import Datepicker from 'vuejs-datepicker';
+  import { ru } from 'vuejs-datepicker/dist/locale';
+  import VueTimepicker from 'vue2-timepicker'
 
   export default {
     name: "rooms_public",
-    components: { truncate, 'lightbox': Lightbox },
+    components: { truncate, 'lightbox': Lightbox, Datepicker, VueTimepicker },
     data() {
       return {
         rooms: [],
+
+        ru: ru,
 
         pagination: {
           page: 1,
@@ -97,6 +115,8 @@
         },
 
         order: {},
+        
+        tmp_price: '',
 
         pictures: {
           thumbnailDir: 'http://booking.ru'
@@ -116,6 +136,9 @@
           this.order.price = (this.order.price * this.order.days) * 0.95;
         }
          this.order.price = (this.order.price * this.order.days);
+        if (this.order.price === 0) {
+          this.order.price = this.tmp_price;
+        }
       },
 
       switchPage(page) {
@@ -135,6 +158,7 @@
 
       showModal(room) {
         this.fillOrder(room);
+        this.tmp_price = this.order.price;
         this.$modal.show('order');
       },
 
@@ -143,13 +167,19 @@
       },
 
       fillOrder(room) {
-        this.order = {...room};
+        this.order = {
+          ...room,
+          note_date: new Date().toString(),
+          note_time: {
+            HH: '00',
+            mm: '00'
+          },};
         this.order.days = '';
       },
 
       async makeOrder() {
         this.order.room_id = this.order.id;
-        const response = await axios.post('/orders/create', this.order);
+        const response = await axios.post('/orders/publish', this.order);
         if (response.status !== 200 || response.data.status === 'error') {
           this.$swal('Ошибка!', response.data.msg, 'error');
           return false;

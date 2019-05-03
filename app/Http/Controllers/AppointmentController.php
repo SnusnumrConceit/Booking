@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\WriteAudit;
 use App\Exceptions\ControllerException;
 use App\Http\Requests\Appointment\AppointmentFormRequest;
 use App\Http\Requests\Employee\EmployeeFormRequest;
@@ -28,6 +29,11 @@ class AppointmentController extends Controller
                 'name' => $request->appointment
             ]);
             $appointment->save();
+            event(new WriteAudit((object)[
+                'id'    => $appointment->id,
+                'name'  => $appointment->email,
+                'type'  => 'appointment'
+            ], 1, 12));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Должность успешно добавлена'

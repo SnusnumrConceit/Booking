@@ -56,7 +56,7 @@
                             <i class="fa fa-sort-amount-up" v-if="filter.name === 'status' && filter.type === 'DESC'"></i>
                             <i class="fa fa-sort-amount-down" v-else-if="filter.name === 'status' && filter.type === 'ASC'"></i>
                         </th>
-                        <th @click="setFilter('created_at')" class="text-left">
+                        <th @click="setFilter('note_date')" class="text-left">
                             Дата и время заселения
                             <i class="fa fa-sort-amount-up" v-if="filter.name === 'note_date' && filter.type === 'DESC'"></i>
                             <i class="fa fa-sort-amount-down" v-else-if="filter.name === 'note_date' && filter.type === 'ASC'"></i>
@@ -198,10 +198,13 @@
       },
 
       async searchData() {
+        console.log(this.filter);
         const response = await axios.get('/orders/search', {
-          keyword: this.search.keyword,
-          filter: {...this.filter},
-          page: this.pagination.page
+          params: {
+            keyword: this.search.keyword,
+            filter: {...this.filter},
+            page: this.pagination.page
+          }
         });
         if (response.status !== 200) {
           this.$swal('Ошибка', response.data.msg, 'error');

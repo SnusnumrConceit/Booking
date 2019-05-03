@@ -33,11 +33,14 @@ class OrderShipped extends Mailable
      */
     public function build()
     {
+        $url = (auth()->user()->hasRole('superadmin|admin')) ? 'http://booking.ru/admin/#/admin/orders' : 'http://booking.ru/?#/rooms';
         return $this->from('booking.ru@world.info')->markdown('emails.orders.shipped')
             ->with([
-                'order_number' => $this->order->room->number,
-                'order_days' => $this->order->days,
-                'customer_name' => $this->order->customer->last_name.' '.$this->order->customer->first_name
+                'order_number'      => $this->order->room->number,
+                'order_days'        => $this->order->days,
+                'order_note_date'   => $this->order->note_date,
+                'customer_name'     => $this->order->customer->last_name.' '.$this->order->customer->first_name,
+                'url'               => $url
             ])->subject('Заказ на '. config('app.name'));
     }
 }

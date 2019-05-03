@@ -27,7 +27,7 @@ class OrderFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'customer'    => 'required|integer',
+            'customer'  =>  'required|integer',
             'room'      =>  'required|integer',
             'status'    =>  'required|integer',
             'note_date' =>  'required|date',

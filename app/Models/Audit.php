@@ -12,7 +12,7 @@ class Audit extends Model
     public function makeLog($subject, $status, $type)
     {
         try {
-            $status = json_encode($status);
+//            $status = json_encode($status);
             $this->fill([
                 'status' => $status,
                 'subject' => $subject,

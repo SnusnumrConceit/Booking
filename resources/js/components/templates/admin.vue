@@ -4,7 +4,7 @@
             <div class="logo">
                 <h2>booking.ru</h2>
             </div>
-            <div class="menu-sidebar__content js-scrollbar1">
+            <div class="menu-sidebar__content js-scrollbar1" v-if="verifyUser">
                 <nav class="navbar-sidebar">
                     <ul class="list-unstyled navbar__list">
                         <li :class="{ 'active': menu.isActive.orders, 'has-sub': menu.isActive.orders}" @click="active('orders', 'menu')" v-if="access">
@@ -304,9 +304,17 @@
         localStorage.removeItem('user');
         localStorage.removeItem('csrf_token');
         this.$router.push({ name: 'login' });
+      },
+
+      verifyUser() {
+        return (typeof this.user === 'object' && this.user.csrf_token !== undefined);
       }
     },
     created() {
+      if (! this.verifyUser()) {
+        this.$router.push({ name: 'login'});
+        return false;
+      }
       this.checkOpenTab();
     }
   }

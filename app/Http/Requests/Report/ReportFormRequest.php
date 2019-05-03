@@ -27,7 +27,7 @@ class ReportFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'description' => 'required|min:5|max:500'
+            'description' => 'required|min:2|max:500'
         ];
     }
 

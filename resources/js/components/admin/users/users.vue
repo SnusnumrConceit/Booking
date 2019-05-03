@@ -54,14 +54,14 @@
                         <th></th>
                         </thead>
                         <tbody v-for="(user, index) in users" :key="user.id">
-                        <td>{{ user.last_name }} {{ user.first_name }} {{ user.middle_name }}</td>
-                        <td>{{ user.email }} </td>
-                        <td>{{ user.birthday }} </td>
-                        <td>{{ user.created_at }} </td>
-                        <td>
-                            <i class="fa fa-cog text-success" @click="$router.push({path: '/admin/users/' + user.id})"></i>
-                            <i class="fa fa-trash text-danger" @click="remove(index, user.id)"></i>
-                        </td>
+                            <td @click="showInfo(user.id)">{{ user.last_name }} {{ user.first_name }} {{ user.middle_name }}</td>
+                            <td>{{ user.email }} </td>
+                            <td>{{ user.birthday }} </td>
+                            <td>{{ user.created_at }} </td>
+                            <td>
+                                <i class="fa fa-cog text-success" @click="$router.push({path: '/admin/users/' + user.id})"></i>
+                                <i class="fa fa-trash text-danger" @click="remove(index, user.id)"></i>
+                            </td>
                         </tbody>
                     </table>
                     <paginate v-model="pagination.page"
@@ -82,14 +82,20 @@
                     Не найдено ни одного пользователя
                 </div>
             </div>
+            <modal name="cabinet">
+                <cabinet :id="tmp_user"></cabinet>
+            </modal>
         </div>
     </div>
 </template>
 
 <script>
   import debounce from 'v-debounce';
+  import Cabinet from '../../public/content/cabinet';
+
   export default {
     name: "users",
+    components: { Cabinet },
     directives: {debounce},
     data() {
       return {
@@ -110,6 +116,8 @@
           name: '',
           type: ''
         },
+
+        tmp_user: ''
       }
     },
 
@@ -161,6 +169,15 @@
         this.search.isSearch = true;
         this.search.processing = true;
         this.switchPage(1);
+      },
+
+      showInfo(id) {
+        this.tmp_user = id;
+        this.$modal.show('cabinet');
+      },
+
+      hideModal(modal) {
+        this.$modal.hide(modal);
       },
 
       async remove(index, id) {
@@ -218,6 +235,12 @@
     created() {
       this.loadData();
     },
+
+    mounted() {
+      this.$root.$on('hide', (modal) => {
+        this.hideModal(modal);
+      });
+    }
   }
 </script>
 

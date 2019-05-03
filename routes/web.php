@@ -64,6 +64,7 @@ Route::group([
         ->where('id', '[0-9]+');
     Route::post('/remove/{id}', 'OrderController@destroy')
         ->where('id', '[0-9]+');
+    Route::post('/publish', 'OrderController@publish');
 });
 
 Route::group([

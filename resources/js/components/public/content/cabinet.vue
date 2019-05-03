@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="modal-header">
-            <h2>{{ user.full_name }}</h2>
+            <h2>{{ user_info.full_name }}</h2>
             <button class="close"
                     @click="$root.$emit('hide', 'cabinet')">
                 &times;
@@ -68,6 +68,10 @@
   export default {
     name: "cabinet",
 
+    props: {
+      id: ''
+    },
+
     data() {
       return {
         user_info: {
@@ -88,13 +92,13 @@
       },
 
       async loadData() {
-        const response = await axios.get('/users/info', { params: { page: this.page }});
+        const response = await axios.get('/users/info', { params: { page: this.page, id: this.id }});
         if (response.status !== 200 || response.data.status === 'error') {
           this.$swal('Ошибка!', response.data.msg, 'error');
           return false;
         }
         this.user_info = response.data.user_info;
-        this.pagination.last_page = response.data.orders.last_page;
+        this.pagination.last_page = response.data.user_info.orders.last_page;
       }
     },
 
