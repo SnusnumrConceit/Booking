@@ -96,6 +96,10 @@ class PhotoController extends Controller
             $photo = Photo::findOrFail($id);
             Image::remove($photo);
             $photo->delete();
+            return response()->json([
+                'status' => 'success',
+                'msg'    => 'Фотография успешно удалена!'
+            ]);
         } catch (\Exception $error) {
             return response()->json([
                 'status' => 'error',

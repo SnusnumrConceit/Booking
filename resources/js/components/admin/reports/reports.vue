@@ -17,6 +17,11 @@
                                     :bootstrap-styling="true">
                         </datepicker>
                     </div>
+                    <div class="col-md-2" v-if="isSearch">
+                        <button class="btn btn-primary" @click="resetSearch">
+                            Сбросить
+                        </button>
+                    </div>
                 </div>
                 <div class="table-responsive table--no-card m-b-40" v-if="reports.length">
                     <table class="table table-borderless table-striped table-earning">
@@ -188,11 +193,12 @@
         if (after === before) {
           return false;
         }
-        if (!after.length) {
-          this.resetSearch();
-          return true;
-        }
+        console.log(after);
         this.searchWrap();
+        // if (!after.length) {
+        //   this.resetSearch();
+        //   return true;
+        // }
       },
     },
 

@@ -140,7 +140,7 @@
           return false;
         } else {
           this.$swal('Успешно!', response.data.msg, 'success');
-          this.rooms[room_index].photos.splice(photo_index, 1);
+          this.$delete(this.rooms[room_index].photos.photos, photo_index);
         }
       },
 
