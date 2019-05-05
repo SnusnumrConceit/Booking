@@ -7,8 +7,8 @@
                         <!--<div class="card-header">-->
                             <!--{{ report.user.full_name }}-->
                         <!--</div>-->
-                        <div class="card-body">
-                            {{ report.description }}
+                        <div class="card-body report-card">
+                            <truncate clamp="..." less="Скрыть" :length="90" :text="report.description"></truncate>
                         </div>
                         <div class="card-footer">
                             {{ report.created_at }}
@@ -59,8 +59,12 @@
 <script>
 
   import {mapGetters} from 'vuex';
+  import truncate from 'vue-truncate-collapsed';
   export default {
     name: "reports_public",
+    components: {
+      truncate
+    },
     data() {
       return {
         reports: [],
@@ -171,7 +175,7 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
     .reports-container {
         display: flex;
     }

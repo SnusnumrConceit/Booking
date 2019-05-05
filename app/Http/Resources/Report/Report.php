@@ -17,7 +17,8 @@ class Report extends JsonResource
     {
         return [
             'id' => $this->id,
-            'description' => substr($this->description, 0, 30).'...',
+//            'description' => mb_substr($this->description, 0, 50).'...',
+            'description' => $this->description,
             'user' => $this->user || null,
             'created_at' => $this->convertDate($this->created_at)
         ];

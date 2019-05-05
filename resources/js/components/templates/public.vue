@@ -132,6 +132,7 @@
         } else {
           this.clearStorage();
           this.user = {};
+          // window.reload();
         }
       },
     },

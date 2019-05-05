@@ -6,6 +6,7 @@ use App\Events\FreeRoom;
 use App\Events\OrderComplete;
 use App\Http\Requests\Order\OrderFormRequest;
 use App\Http\Resources\Order\OrderCollection;
+use App\Http\Resources\Order\OrderForm;
 use App\Mail\OrderShipped;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Order;
@@ -131,7 +132,8 @@ class OrderController extends Controller
         try {
             $order = Order::with(['customer', 'room'])->findOrFail($id);
             return response()->json([
-                'order' => $order,
+                'order' => new OrderForm($order),
+//            'order' => $order
             ], 200);
         } catch (\Exception $error) {
             return response()->json([
@@ -237,16 +239,16 @@ class OrderController extends Controller
         if (empty($data->user_id)) {
             $data->customer = auth()->user()->id;
         }
-        $order = Order::where([
-            'user_id' => $data->customer,
-            'room_id' => $data->room,
-            'status' => $data->status
-        ])->count();
-        if ($order) {
-            throw new \Exception('Такой заказ уже существует');
-        }
-        $order = new Order();
-        $order->fill([
+//        $order = Order::where([
+//            'user_id' => $data->customer,
+//            'room_id' => $data->room,
+//            'status' => $data->status
+//        ])->count();
+//        if ($order) {
+//            throw new \Exception('Такой заказ уже существует');
+//        }
+//        $order = new Order();
+        $order = (new Order())->fill([
             'user_id' => $data->customer,
             'room_id' => $data->room,
             'status' => $data->status,
