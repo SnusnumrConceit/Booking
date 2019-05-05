@@ -20,7 +20,7 @@ class AppointmentController extends Controller
     {
         try {
             $validation = $request->validated();
-            $appointment = Appointment::where('name', $request->appointment)->count();
+            $appointment = Appointment::where('name', $request->appoitment)->count();
             if ($appointment) {
                 throw (new ControllerException('Такая должность уже существует'));
             }
@@ -127,13 +127,13 @@ class AppointmentController extends Controller
     {
         try {
             $validation = $request->validated();
-            $appointment = Appointment::where('name', $request->name)->count();
+            $appointment = Appointment::where('name', $request->appointment)->count();
             if ($appointment) {
                 throw new \Exception('Такая должность уже существует');
             }
             $appointment = Appointment::findOrFail($id);
             $appointment->fill([
-                'name' => $request->name
+                'name' => $request->appointment
             ]);
             $appointment->save();
             return response()->json([

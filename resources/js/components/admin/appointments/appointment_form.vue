@@ -49,7 +49,7 @@
     methods: {
       async save() {
         if (this.$route.params.id) {
-          const response = await axios.post('/appointments/update/' + this.$route.params.id, this.appointment);
+          const response = await axios.post('/appointments/update/' + this.$route.params.id, { appointment: this.appointment.name });
           if (response.status !== 200 || response.data.status === 'error') {
             this.swal.errors = (response.data.errors !== undefined) ? response.data.errors : {};
             this.swal.message = this.getSwalMessage();
@@ -65,7 +65,7 @@
             return true;
           }
         } else {
-          const response = await axios.post('/appointments/create', { 'appointment' : this.appointment.name });
+          const response = await axios.post('/appointments/create', { appointment: this.appointment.name });
           if (response.status !== 200 || response.data.status === 'error') {
             this.swal.errors = (response.data.errors !== undefined) ? response.data.errors : {};
             this.swal.message = this.getSwalMessage();
