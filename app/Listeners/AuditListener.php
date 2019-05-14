@@ -26,7 +26,6 @@ class AuditListener
      */
     public function handle($event)
     {
-        $audit = new Audit();
-        $audit->makeLog($event->subject, $event->status, $event->type);
+        (new Audit())->makeLog($event->subject, $event->status, $event->type, $event->user_id);
     }
 }

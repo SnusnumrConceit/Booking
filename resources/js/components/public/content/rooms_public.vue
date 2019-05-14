@@ -57,7 +57,7 @@
                 </div>
             </div>
         </div>
-        <modal name="order" height="auto">
+        <modal name="order" height="auto" :scrollable="true">
             <div class="modal-header">
                 <h3>Ваш заказ</h3>
             </div>

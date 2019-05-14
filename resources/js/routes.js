@@ -19,6 +19,8 @@ import ReportForm from './components/admin/reports/report_form';
 import Users from  './components/admin/users/users';
 import UserForm from  './components/admin/users/user_form';
 
+import Audit from './components/admin/audit/audit';
+
 import Login from './components/templates/login_admin';
 
 /** Public Routes **/
@@ -155,6 +157,13 @@ export const routes = [
     name: 'report_form',
     path: '/admin/reports/:id',
     component: ReportForm,
+    beforeEnter: hasPermission
+  },
+
+  {
+    name: 'audit',
+    path: '/admin/audit',
+    component: Audit,
     beforeEnter: hasPermission
   },
 

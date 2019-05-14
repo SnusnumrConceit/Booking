@@ -49,6 +49,12 @@
                                 Должности
                             </router-link>
                         </li>
+                        <li :class="{ 'active': menu.isActive.audit, 'has-sub': menu.isActive.audit}" @click="active('audit', 'menu')" v-if="accessAdmin">
+                            <router-link :to="'/admin/audit'">
+                                <i class="fas fa-award"></i>
+                                Аудит
+                            </router-link>
+                        </li>
                     </ul>
                 </nav>
             </div>

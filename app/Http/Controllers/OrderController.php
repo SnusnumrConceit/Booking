@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\FreeRoom;
 use App\Events\OrderComplete;
+use App\Events\WriteAudit;
 use App\Http\Requests\Order\OrderFormRequest;
 use App\Http\Resources\Order\OrderCollection;
 use App\Http\Resources\Order\OrderForm;
@@ -55,6 +56,12 @@ class OrderController extends Controller
             }
             $mail_order = $order->with(['customer', 'room'])->findOrFail($order->id);
             event(new OrderComplete($mail_order));
+            event(new WriteAudit((object)[
+                'id'        =>  $order->id,
+                'customer'  =>  $order->user_id,
+                'room'      =>  $order->room_id,
+                'type'  => 'room'
+            ], 1, 15));
 //            Mail::to($mail_order->customer)->send(new OrderShipped(
 //                $mail_order
 //            ));
@@ -188,6 +195,12 @@ class OrderController extends Controller
             if ($order->status == 3) {
                 event(new FreeRoom(1, $order->room_id));
             }
+            event(new WriteAudit((object)[
+                'id'        =>  $order->id,
+                'customer'  =>  $order->user_id,
+                'room'      =>  $order->room_id,
+                'type'  => 'room'
+            ], 1, 16));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Заказ успешно обновлён'
@@ -212,6 +225,11 @@ class OrderController extends Controller
             Room::where('id', $order->room_id)->update([
                 'free' => 1
             ]);
+            event(new WriteAudit((object)[
+                'customer'  =>  $order->user_id,
+                'room'      =>  $order->room_id,
+                'type'  => 'room'
+            ], 1, 17));
             $order->delete();
             return response()->json([
                 'status' => 'success',
@@ -259,6 +277,12 @@ class OrderController extends Controller
         event(new FreeRoom(0, $order->room_id));
         $mail_order = $order->with(['customer', 'room'])->findOrFail($order->id);
         event(new OrderComplete($mail_order));
+        event(new WriteAudit((object)[
+            'id'        =>  $order->id,
+            'customer'  =>  $order->user_id,
+            'room'      =>  $order->room_id,
+            'type'  => 'room'
+        ], 1, 15));
 //        Mail::to($mail_order->customer)->send(new OrderShipped(
 //            $mail_order
 //        ));

@@ -140,3 +140,7 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth'], function () {
    Route::get('/users/info', 'UserController@info');
 });
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/audits', 'AuditController@store');
+});

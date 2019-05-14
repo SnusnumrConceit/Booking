@@ -31,7 +31,7 @@ class AppointmentController extends Controller
             $appointment->save();
             event(new WriteAudit((object)[
                 'id'    => $appointment->id,
-                'name'  => $appointment->email,
+                'name'  => $appointment->name,
                 'type'  => 'appointment'
             ], 1, 12));
             return response()->json([
@@ -136,6 +136,11 @@ class AppointmentController extends Controller
                 'name' => $request->appointment
             ]);
             $appointment->save();
+            event(new WriteAudit((object)[
+                'id'    => $appointment->id,
+                'name'  => $appointment->name,
+                'type'  => 'appointment'
+            ], 1, 13));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Должность успешно обновлена'
@@ -158,7 +163,13 @@ class AppointmentController extends Controller
     public function destroy(int $id)
     {
         try {
-            $appointment = Appointment::findOrFail($id)->delete();
+            $appointment = Appointment::findOrFail($id);
+            $name = $appointment->name;
+            $appointment->delete();
+            event(new WriteAudit((object)[
+                'name'  => $name,
+                'type'  => 'appointment'
+            ], 1, 14));
             return response()->json([
                 'status' => 'success',
                 'msg' => 'Должность успешно удалена'
