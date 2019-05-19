@@ -192,9 +192,11 @@
                                         <div class="content" v-if="user">
                                             <a class="js-acc-btn" href="#">
                                                 {{ user.full_name }}
+                                                <i class="far fa-user"></i>
                                             </a>
                                             <a href="#" @click="logout()">
                                                 Выйти
+                                                <i class="fas fa-sign-out-alt"></i>
                                             </a>
                                         </div>
                                         <!--<div class="account-dropdown js-dropdown">-->
@@ -327,5 +329,7 @@
 </script>
 
 <style scoped>
-
+    a::after {
+        display: none !important;
+    }
 </style>
