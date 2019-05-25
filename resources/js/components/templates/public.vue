@@ -71,7 +71,7 @@
         <modal name="registration" height="auto">
             <registration></registration>
         </modal>
-        <modal name="cabinet">
+        <modal name="cabinet" height="auto" responsible="true">
             <cabinet></cabinet>
         </modal>
     </div>

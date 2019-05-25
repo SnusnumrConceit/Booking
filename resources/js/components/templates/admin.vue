@@ -257,7 +257,7 @@
 <script>
     import Login from './login_admin';
 
-    import { mapGetters } from 'vuex';
+    import { mapGetters, mapActions } from 'vuex';
 
   export default {
     name: "admin",
@@ -311,8 +311,13 @@
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('csrf_token');
+        this.setUser({});
         this.$router.push({ name: 'login' });
       },
+
+        ...mapActions('Auth', {
+          'setUser': 'setUser'
+        }),
 
       verifyUser() {
         return (typeof this.user === 'object' && this.user.csrf_token !== undefined);
